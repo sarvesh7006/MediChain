@@ -2,32 +2,38 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const { errorHandler, notFound } = require('./middleware/errorMiddleware');
-const indexRoutes = require('./routes/indexRoutes');
-const userRoutes = require('./routes/userRoutes');
-const recordRoutes = require('./routes/recordRoutes');
+const decentralizedRoutes = require('./routes/decentralizedRoutes');
+const blockchainService = require('./services/blockchainService');
 
 const app = express();
 
+// Initialize Blockchain Service when server starts
+blockchainService.initialize();
+
 // Middleware
-app.use(helmet()); // Security headers
+app.use(helmet()); 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev')); // HTTP logging
 
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 200, 
 });
 app.use(limiter);
 
-// Routes
-// Basic health route using the MVC structure
-app.use('/', indexRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/records', recordRoutes);
+// Decentralized Web3 Routes
+app.use('/api/v1', decentralizedRoutes);
+
+// Health check
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'Decentralized Backend is Online', blockchainInit: blockchainService.isInitialized });
+});
 
 // Error Handling Middleware
 app.use(notFound);
