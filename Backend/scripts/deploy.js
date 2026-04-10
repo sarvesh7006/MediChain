@@ -3,12 +3,6 @@ const hre = require("hardhat");
 async function main() {
   console.log("🚀 Deploying MediChain contracts...");
 
-  // Deploy MediToken (ERC-20)
-  const MediToken = await hre.ethers.getContractFactory("MediToken");
-  const mediToken = await MediToken.deploy();
-  await mediToken.waitForDeployment();
-  console.log(`✅ MediToken deployed to: ${await mediToken.getAddress()}`);
-
   // Deploy AccessControl (base contract)
   const AccessControl = await hre.ethers.getContractFactory("AccessControl");
   const accessControl = await AccessControl.deploy();
@@ -39,7 +33,6 @@ async function main() {
 
   console.log("\n📝 Contract Addresses:");
   console.log("======================");
-  console.log(`MediToken:        ${await mediToken.getAddress()}`);
   console.log(`AccessControl:    ${await accessControl.getAddress()}`);
   console.log(`MediChain:        ${await mediChain.getAddress()}`);
   console.log(`EmergencyAccess:  ${await emergencyAccess.getAddress()}`);
@@ -50,7 +43,6 @@ async function main() {
   console.log("2. Patients can register themselves and create medical records");
   console.log("3. Set up emergency info for QR code generation");
   console.log("4. Register insurance policies for one-click claims");
-  console.log("5. Transfer MEDI tokens to patients for rewards ecosystem");
 }
 
 main()

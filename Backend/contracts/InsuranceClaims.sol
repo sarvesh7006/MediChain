@@ -76,7 +76,7 @@ contract InsuranceClaims is AccessControl {
         _;
     }
 
-    modifier onlyInsurance() {
+    modifier onlyInsurance() override{
         require(roles[msg.sender] == Roles.Insurance, "InsuranceClaims: Caller is not insurance");
         _;
     }

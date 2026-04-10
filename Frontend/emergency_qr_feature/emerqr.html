@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#daf8ff",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#f8fafb",
+                        "surface-container-highest": "#e1e3e4",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#006876",
+                        "secondary-container": "#cee7ee",
+                        "surface-variant": "#e1e3e4",
+                        "secondary": "#4b6268",
+                        "primary": "#005f6c",
+                        "on-primary-fixed": "#001f25",
+                        "primary-fixed": "#a0efff",
+                        "on-tertiary-fixed-variant": "#0040a1",
+                        "surface-container-low": "#f2f4f5",
+                        "on-secondary-fixed-variant": "#344a50",
+                        "on-tertiary-container": "#f0f2ff",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#007a8a",
+                        "on-secondary-container": "#51686e",
+                        "surface-container-high": "#e6e8e9",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#dae2ff",
+                        "secondary-fixed-dim": "#b2cbd1",
+                        "surface-dim": "#d8dadb",
+                        "surface": "#f8fafb",
+                        "inverse-on-surface": "#eff1f2",
+                        "on-background": "#191c1d",
+                        "on-primary-fixed-variant": "#004e59",
+                        "outline-variant": "#bdc8cb",
+                        "surface-container": "#eceeef",
+                        "background": "#f8fafb",
+                        "on-surface-variant": "#3e494b",
+                        "inverse-surface": "#2e3132",
+                        "tertiary": "#004ec0",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#2767e3",
+                        "outline": "#6e797b",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#cee7ee",
+                        "on-secondary-fixed": "#061f24",
+                        "inverse-primary": "#7ad4e5",
+                        "primary-fixed-dim": "#7ad4e5",
+                        "on-tertiary-fixed": "#001847",
+                        "on-surface": "#191c1d",
+                        "tertiary-fixed-dim": "#b2c5ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,95,108,0.06)]">
+<div class="grid grid-cols-3 items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+<a href="../landing_page/landingpage.html" class="text-2xl font-bold tracking-tighter text-teal-800">MediChain</a>
+<div class="hidden md:flex items-center justify-center gap-8">
+<a class="text-slate-600 hover:text-teal-700 transition-all duration-300 font-medium tracking-tight" href="../dashboard/code.html">Dashboard</a>
+<a class="text-slate-600 hover:text-teal-700 transition-all duration-300 font-medium tracking-tight" href="../records/records.html">Records</a>
+<a class="text-slate-600 hover:text-teal-700 transition-all duration-300 font-medium tracking-tight" href="../insurance_claim/insuranceclaim.html">Insurance</a>
+</div>
+<div class="flex items-center gap-4 justify-end">
+<a href="../emergency_qr_feature/emerqr.html" class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-bold text-sm tracking-tight flex items-center gap-2 hover:opacity-90 active:scale-[0.99] transition-all">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">qr_code_2</span>
+                    Emergency QR
+                </a>
+<div class="flex items-center gap-2 text-slate-400">
+<span class="material-symbols-outlined cursor-pointer hover:text-teal-700">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-teal-700">shield</span>
+</div>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-24 px-6 md:px-12 max-w-screen-2xl mx-auto">
+<!-- Hero Section: Personal QR Display -->
+<section class="flex flex-col lg:flex-row gap-12 items-center mb-32">
+<div class="flex-1 space-y-8">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-tertiary-container text-tertiary font-label text-xs font-bold tracking-widest uppercase">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+                    SECURE IDENTITY
+                </div>
+<h1 class="text-5xl md:text-6xl font-extrabold text-primary leading-tight tracking-tighter max-w-2xl">
+                    Your Lifeline, <br/><span class="text-primary-container">Always Accessible.</span>
+</h1>
+<p class="text-lg text-secondary max-w-xl leading-relaxed">
+                    MediChain’s blockchain-secured Emergency QR allows paramedics and clinical staff to access your vital health data instantly during a crisis.
+                </p>
+<div class="flex flex-wrap gap-4">
+<button id="btn-download" onclick="downloadQR()" class="px-8 py-4 bg-primary text-on-primary rounded-xl font-bold flex items-center gap-3 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined">download</span>
+                        Download QR
+                    </button>
+</div>
+</div>
+<!-- Glassmorphic QR Container -->
+<div class="relative group">
+<div class="absolute -inset-4 bg-gradient-to-tr from-primary/10 to-tertiary/10 rounded-[3rem] blur-2xl transition-all group-hover:blur-3xl"></div>
+<div class="relative bg-surface-container-lowest p-10 rounded-[2.5rem] shadow-[0_20px_40px_rgba(0,95,108,0.06)] border border-white/40 backdrop-blur-xl">
+<div class="bg-surface-container-low p-6 rounded-3xl mb-6 flex items-center justify-center" style="min-height:280px">
+  <div id="qr-canvas" class="flex items-center justify-center"></div>
+</div>
+<div class="text-center">
+<p id="qr-patient-id" class="font-headline font-bold text-lg text-primary">Patient ID: #MC-88219</p>
+<p id="qr-valid" class="font-label text-sm text-secondary mt-1">Your emergency QR is ready</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Asymmetric Bento Grid: What happens when scanned? -->
+<section class="mb-32">
+<div class="flex justify-between items-end mb-12">
+<div class="space-y-4">
+<h2 class="text-3xl font-bold text-primary tracking-tight">What happens when scanned?</h2>
+<p class="text-secondary max-w-lg">When a verified medical professional scans your code, they receive a filtered, read-only view of your essential data.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Blood Group -->
+<div class="md:col-span-4 bg-surface-container-low p-8 rounded-[2rem] border border-white/50 hover:bg-surface-container transition-all">
+<div class="w-12 h-12 bg-error-container text-error rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined">bloodtype</span>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 text-on-surface">Blood Group</h3>
+<p class="text-3xl font-extrabold text-error">O Positive (O+)</p>
+<p class="mt-4 text-sm text-secondary leading-relaxed">Critical for immediate transfusion protocols in trauma scenarios.</p>
+</div>
+<!-- Allergies -->
+<div class="md:col-span-8 bg-surface-container-low p-8 rounded-[2rem] border border-white/50 hover:bg-surface-container transition-all">
+<div class="w-12 h-12 bg-secondary-container text-on-secondary-container rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<h3 class="font-headline font-bold text-xl mb-4 text-on-surface">Active Allergies</h3>
+<div class="flex flex-wrap gap-3">
+<span class="px-4 py-2 bg-error-container text-on-error-container rounded-full text-sm font-bold">Penicillin</span>
+<span class="px-4 py-2 bg-error-container text-on-error-container rounded-full text-sm font-bold">Latex</span>
+<span class="px-4 py-2 bg-white/50 text-secondary rounded-full text-sm font-bold">Peanuts</span>
+<span class="px-4 py-2 bg-white/50 text-secondary rounded-full text-sm font-bold">Shellfish</span>
+</div>
+</div>
+<!-- Medical Conditions -->
+<div class="md:col-span-7 bg-surface-container-low p-8 rounded-[2rem] border border-white/50 hover:bg-surface-container transition-all">
+<div class="w-12 h-12 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined">ecg</span>
+</div>
+<h3 class="font-headline font-bold text-xl mb-4 text-on-surface">Conditions &amp; History</h3>
+<div class="space-y-3">
+<div class="flex items-center gap-4 justify-end bg-white/40 p-4 rounded-xl">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-medium">Type 2 Diabetes Mellitus</span>
+</div>
+<div class="flex items-center gap-4 justify-end bg-white/40 p-4 rounded-xl">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-medium">Hypertension (Managed)</span>
+</div>
+</div>
+</div>
+<!-- Emergency Contact -->
+<div class="md:col-span-5 bg-tertiary/5 p-8 rounded-[2rem] border border-tertiary/10 hover:bg-tertiary/10 transition-all">
+<div class="w-12 h-12 bg-tertiary-container text-tertiary rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined">contact_phone</span>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 text-on-surface">Emergency Contact</h3>
+<p class="font-bold text-primary">Sarah Miller (Wife)</p>
+<p class="text-2xl font-headline font-extrabold text-on-surface mt-2">+1 (555) 012-9984</p>
+<button class="mt-6 w-full py-3 bg-tertiary text-on-tertiary rounded-xl font-bold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">call</span>
+                        Test Dial
+                    </button>
+</div>
+</div>
+</section>
+<!-- Scan View Simulation: Clinical Interface -->
+<section class="bg-slate-900 rounded-[3rem] overflow-hidden p-8 md:p-16 relative">
+<div class="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
+<img alt="Abstract blue geometric medical grid pattern with DNA helix and digital data points on dark background" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJ2fU2L5PcLjyEs5qmfqzboGkT-3x8o9M7fl6iRHI-hu7Q0zewrOCaoS5SpqIqMNZZFnW7MdHhAg5F_76jDnqlNrzfTR-zmluPbasr7HiooTHdUIgQ8_4S63FyjwWvcDgfBk2ZKOwjK8y9JCCJJmTjfeZIu9p54OB2KrsvdLA2UoSLY5RsRgMHx24_GFI0pndyv2zIGO5PhDG9OlSL2HC5HIKNwfp65m1-ypZOPFwVl-LxG76OAwYif5ihB6shHtXs0PYLDraK85g"/>
+</div>
+<div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<div class="space-y-6">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-error animate-pulse"></div>
+<span class="text-error font-label font-bold tracking-widest text-xs uppercase">Responder View Active</span>
+</div>
+<h2 class="text-4xl font-headline font-bold text-white tracking-tight">Clinical Scan Interface</h2>
+<p class="text-slate-400 text-lg leading-relaxed">This is exactly what an EMS technician or ER physician sees upon scanning your QR. High-priority data is emphasized to ensure rapid, error-free clinical decision making.</p>
+<div class="space-y-4 pt-4">
+<div class="flex items-center gap-4 justify-end text-slate-300">
+<span class="material-symbols-outlined text-teal-400">lock_open</span>
+<span>Blockchain verified data integrity</span>
+</div>
+<div class="flex items-center gap-4 justify-end text-slate-300">
+<span class="material-symbols-outlined text-teal-400">visibility</span>
+<span>Temporary, secure clinician session</span>
+</div>
+</div>
+</div>
+<!-- Simulation Phone Mockup -->
+<div class="mx-auto w-full max-w-sm aspect-[9/19] bg-slate-800 rounded-[3.5rem] border-[8px] border-slate-700 shadow-2xl relative overflow-hidden flex flex-col">
+<!-- Screen Header -->
+<div class="bg-error p-6 text-white text-center">
+<div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-4"></div>
+<p class="font-label text-[10px] tracking-widest uppercase font-bold opacity-80">Emergency Medical Data</p>
+<h4 class="text-xl font-headline font-extrabold mt-1">Jonathan Doe</h4>
+</div>
+<!-- Screen Body -->
+<div class="flex-1 overflow-y-auto p-5 space-y-4 bg-slate-900">
+<div class="bg-slate-800/80 p-4 rounded-2xl border-l-4 border-error">
+<p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Critical Allergy</p>
+<p class="text-error font-bold">PENICILLIN - SEVERE ANAPHYLAXIS</p>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-slate-800/80 p-4 rounded-2xl">
+<p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Blood Type</p>
+<p class="text-white font-bold">O Positive</p>
+</div>
+<div class="bg-slate-800/80 p-4 rounded-2xl">
+<p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Age</p>
+<p class="text-white font-bold">34 Years</p>
+</div>
+</div>
+<div class="bg-slate-800/80 p-4 rounded-2xl">
+<p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Medical Conditions</p>
+<ul class="text-slate-200 text-sm mt-2 space-y-1">
+<li class="flex items-center gap-2"><span class="w-1 h-1 bg-teal-400 rounded-full"></span> Type 2 Diabetes</li>
+<li class="flex items-center gap-2"><span class="w-1 h-1 bg-teal-400 rounded-full"></span> Asthmatic History</li>
+</ul>
+</div>
+<button class="w-full py-4 bg-error text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-error/20">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">phone_in_talk</span>
+                            Call Emergency Contact
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-slate-200/50 bg-slate-50">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-12 py-12 gap-8 max-w-screen-2xl mx-auto">
+<div class="space-y-2 text-center md:text-left">
+<div class="text-lg font-bold text-teal-900">MediChain</div>
+<p class="text-slate-500 font-body text-sm">© 2024 MediChain. Secure Blockchain Healthcare.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-slate-500 hover:text-teal-600 transition-colors font-label text-sm uppercase tracking-widest" href="#">Privacy Policy</a>
+<a class="text-slate-500 hover:text-teal-600 transition-colors font-label text-sm uppercase tracking-widest" href="#">Terms of Service</a>
+<a class="text-slate-500 hover:text-teal-600 transition-colors font-label text-sm uppercase tracking-widest" href="#">Compliance</a>
+</div>
+</div>
+</footer>
+
+
+
+<script>
+  let qrInstance = null;
+
+
+
+  function generateQR() {
+    const name    = document.getElementById('f-name').value.trim()    || 'Jonathan Doe';
+    const blood   = document.getElementById('f-blood').value.trim()   || 'O Positive';
+    const allergy = document.getElementById('f-allergy').value.trim() || 'Penicillin';
+    const dob     = document.getElementById('f-dob').value.trim()     || '1989-06-14';
+    const contact = document.getElementById('f-contact').value.trim() || 'N/A';
+    const pid     = '#MC-' + Math.floor(10000 + Math.random() * 90000);
+
+    const payload = JSON.stringify({
+      medichain: true,
+      patientId: pid,
+      name, dob,
+      bloodType: blood,
+      allergies: allergy.split(',').map(s => s.trim()),
+      emergencyContact: contact,
+      generatedAt: new Date().toISOString()
+    });
+
+    const container = document.getElementById('qr-canvas');
+    container.innerHTML = '';
+
+    qrInstance = new QRCode(container, {
+      text: payload,
+      width: 240,
+      height: 240,
+      colorDark: '#005f6c',
+      colorLight: '#f2f4f5',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    document.getElementById('qr-patient-id').textContent = 'Patient ID: ' + pid;
+    document.getElementById('qr-valid').textContent = 'Generated ' + new Date().toLocaleString();
+
+    closeGenerateModal();
+    showToast('QR code generated successfully!');
+  }
+
+  function downloadQR() {
+    const canvas = document.querySelector('#qr-canvas canvas');
+    if (!canvas) { showToast('Generate a QR code first.', true); return; }
+    const link = document.createElement('a');
+    link.download = 'medichain-emergency-qr.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('QR downloaded!');
+  }
+
+  function showToast(msg, isError) {
+    const t = document.createElement('div');
+    t.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full font-semibold text-sm shadow-xl ' +
+      (isError ? 'bg-error text-white' : 'bg-primary text-white');
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+  }
+
+  window.addEventListener('load', () => generateQR());
+</script>
+</body></html>

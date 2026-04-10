@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Medical Records | MediChain</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "on-primary-container": "#daf8ff",
+          "on-error": "#ffffff",
+          "on-tertiary": "#ffffff",
+          "surface-bright": "#f8fafb",
+          "surface-container-highest": "#e1e3e4",
+          "error": "#ba1a1a",
+          "surface-tint": "#006876",
+          "secondary-container": "#cee7ee",
+          "surface-variant": "#e1e3e4",
+          "secondary": "#4b6268",
+          "primary": "#005f6c",
+          "on-primary-fixed": "#001f25",
+          "primary-fixed": "#a0efff",
+          "on-tertiary-fixed-variant": "#0040a1",
+          "surface-container-low": "#f2f4f5",
+          "on-secondary-fixed-variant": "#344a50",
+          "on-tertiary-container": "#f0f2ff",
+          "error-container": "#ffdad6",
+          "primary-container": "#007a8a",
+          "on-secondary-container": "#51686e",
+          "surface-container-high": "#e6e8e9",
+          "on-primary": "#ffffff",
+          "tertiary-fixed": "#dae2ff",
+          "secondary-fixed-dim": "#b2cbd1",
+          "surface-dim": "#d8dadb",
+          "surface": "#f8fafb",
+          "inverse-on-surface": "#eff1f2",
+          "on-background": "#191c1d",
+          "on-primary-fixed-variant": "#004e59",
+          "outline-variant": "#bdc8cb",
+          "surface-container": "#eceeef",
+          "background": "#f8fafb",
+          "on-surface-variant": "#3e494b",
+          "inverse-surface": "#2e3132",
+          "tertiary": "#004ec0",
+          "surface-container-lowest": "#ffffff",
+          "tertiary-container": "#2767e3",
+          "outline": "#6e797b",
+          "on-error-container": "#93000a",
+          "on-secondary": "#ffffff",
+          "secondary-fixed": "#cee7ee",
+          "on-secondary-fixed": "#061f24",
+          "inverse-primary": "#7ad4e5",
+          "primary-fixed-dim": "#7ad4e5",
+          "on-tertiary-fixed": "#001847",
+          "on-surface": "#191c1d",
+          "tertiary-fixed-dim": "#b2c5ff"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "fontFamily": {
+          "headline": ["Manrope"],
+          "body": ["Inter"],
+          "label": ["Inter"]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .font-headline { font-family: 'Manrope', sans-serif; }
+  .glass-effect { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .record-card { transition: all 0.2s ease; }
+  .record-card:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(0,95,108,0.10); }
+  #upload-modal { transition: opacity 0.2s ease; }
+</style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,95,108,0.06)]">
+<div class="grid grid-cols-3 items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+<a href="../landing_page/landingpage.html" class="text-2xl font-bold tracking-tighter text-teal-800 font-headline">MediChain</a>
+<div class="hidden md:flex items-center justify-center gap-6">
+<a class="text-slate-600 hover:text-teal-700 font-medium text-sm tracking-tight transition-all duration-300" href="../dashboard/code.html">Dashboard</a>
+<a class="text-teal-800 border-b-2 border-teal-600 pb-1 font-medium text-sm tracking-tight" href="../records/records.html">Records</a>
+<a class="text-slate-600 hover:text-teal-700 font-medium text-sm tracking-tight transition-all duration-300" href="../insurance_claim/insuranceclaim.html">Insurance</a>
+<a class="text-slate-600 hover:text-teal-700 font-medium text-sm tracking-tight transition-all duration-300" href="../patient_requests/patientrequests.html">Requests</a>
+</div>
+<div class="flex items-center gap-4 justify-end">
+<button class="material-symbols-outlined p-2 text-slate-600 hover:bg-teal-50/50 rounded-full transition-all">notifications</button>
+<a href="../emergency_qr_feature/emerqr.html" class="bg-primary hover:bg-primary-container text-white px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 active:scale-95 shadow-lg shadow-primary/20">Emergency QR</a>
+<img alt="User profile photo" class="w-10 h-10 rounded-full border-2 border-primary-container/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN2zqKtz9fW1SDKERxhj86PSWNUJY7yLuwyUsSq9dj-nK9-OSuLi45G2Boict4XFBCA0nAtNlmoKWf8zZaOoDe5PS4MgOK4YFrbwmxkYyTux27hsN38YVkoqpiG3O9El3wveI8nAT5jxQkSG_gi-xIPufPJXKDlBZ2Gpf3AM7gXAOhXkJy1QHoxTHQjFwFTHbsPhcdj66-KJii73o4Oahhfdz03544Z5rIENnTHxIPXeUP3oMhUTWqek7b-dF8eopjqu_pNWszSAs"/>
+</div>
+</div>
+</nav>
+
+<!-- Main Content -->
+<main class="flex-grow pt-32 pb-24 px-8 max-w-screen-2xl mx-auto w-full">
+
+  <!-- Page Header -->
+  <header class="mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+    <div>
+      <h1 class="font-headline text-4xl font-extrabold text-primary tracking-tight mb-1">Medical Records</h1>
+      <p class="text-on-surface-variant font-body">All records are encrypted and stored on the blockchain.</p>
+    </div>
+    <button onclick="document.getElementById('upload-modal').classList.remove('hidden')"
+      class="flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-xl font-semibold text-sm hover:bg-primary-container transition-all shadow-lg shadow-primary/20 active:scale-95">
+      <span class="material-symbols-outlined text-base">cloud_upload</span>
+      Upload New Record
+    </button>
+  </header>
+
+  <!-- Filters & Stats Row -->
+  <div class="flex flex-wrap items-center gap-4 mb-8">
+    <div class="flex gap-2" id="filter-tabs">
+      <button onclick="filterRecords('all')" data-filter="all" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-primary text-on-primary transition-all">All</button>
+      <button onclick="filterRecords('lab')" data-filter="lab" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-surface-container text-secondary hover:bg-surface-container-high transition-all">Lab Reports</button>
+      <button onclick="filterRecords('prescription')" data-filter="prescription" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-surface-container text-secondary hover:bg-surface-container-high transition-all">Prescriptions</button>
+      <button onclick="filterRecords('imaging')" data-filter="imaging" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-surface-container text-secondary hover:bg-surface-container-high transition-all">Imaging</button>
+      <button onclick="filterRecords('surgery')" data-filter="surgery" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-surface-container text-secondary hover:bg-surface-container-high transition-all">Surgery</button>
+    </div>
+    <div class="ml-auto flex items-center gap-2 text-sm text-secondary font-medium">
+      <span class="material-symbols-outlined text-base text-primary">verified</span>
+      <span id="record-count">42 records</span> · Blockchain Verified
+    </div>
+  </div>
+
+  <!-- Records Grid -->
+  <div id="records-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+    <!-- Record Card: Lab -->
+    <div class="record-card bg-surface-container-lowest rounded-[1.5rem] p-6 border border-outline-variant/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)]" data-type="lab">
+      <div class="flex items-start justify-between mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary">biotech</span>
+        </div>
+        <span class="text-[10px] font-bold uppercase tracking-widest bg-secondary-container text-primary px-3 py-1 rounded-full">Lab Report</span>
+      </div>
+      <h3 class="font-headline font-bold text-on-surface text-lg mb-1">Complete Blood Count (CBC)</h3>
+      <p class="text-sm text-secondary mb-4">Quest Diagnostics · Dr. Emily Rhodes</p>
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-outline font-label">Dec 14, 2023</span>
+        <div class="flex items-center gap-2">
+          <span class="flex items-center gap-1 text-xs text-teal-600 font-semibold"><span class="material-symbols-outlined text-sm">lock</span> Encrypted</span>
+          <button class="text-primary hover:underline text-xs font-bold ml-2">View →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Record Card: Prescription -->
+    <div class="record-card bg-surface-container-lowest rounded-[1.5rem] p-6 border border-outline-variant/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)]" data-type="prescription">
+      <div class="flex items-start justify-between mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-tertiary-fixed flex items-center justify-center">
+          <span class="material-symbols-outlined text-tertiary">medication</span>
+        </div>
+        <span class="text-[10px] font-bold uppercase tracking-widest bg-tertiary-fixed text-tertiary px-3 py-1 rounded-full">Prescription</span>
+      </div>
+      <h3 class="font-headline font-bold text-on-surface text-lg mb-1">Lisinopril 10mg – Monthly</h3>
+      <p class="text-sm text-secondary mb-4">SF General Hospital · Dr. Michael Torres</p>
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-outline font-label">Nov 28, 2023</span>
+        <div class="flex items-center gap-2">
+          <span class="flex items-center gap-1 text-xs text-teal-600 font-semibold"><span class="material-symbols-outlined text-sm">lock</span> Encrypted</span>
+          <button class="text-primary hover:underline text-xs font-bold ml-2">View →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Record Card: Imaging -->
+    <div class="record-card bg-surface-container-lowest rounded-[1.5rem] p-6 border border-outline-variant/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)]" data-type="imaging">
+      <div class="flex items-start justify-between mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-error-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-on-error-container">radiology</span>
+        </div>
+        <span class="text-[10px] font-bold uppercase tracking-widest bg-error-container text-on-error-container px-3 py-1 rounded-full">Imaging</span>
+      </div>
+      <h3 class="font-headline font-bold text-on-surface text-lg mb-1">Chest X-Ray – AP View</h3>
+      <p class="text-sm text-secondary mb-4">Radiology Center · Dr. Priya Nair</p>
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-outline font-label">Oct 5, 2023</span>
+        <div class="flex items-center gap-2">
+          <span class="flex items-center gap-1 text-xs text-teal-600 font-semibold"><span class="material-symbols-outlined text-sm">lock</span> Encrypted</span>
+          <button class="text-primary hover:underline text-xs font-bold ml-2">View →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Record Card: Surgery -->
+    <div class="record-card bg-surface-container-lowest rounded-[1.5rem] p-6 border border-outline-variant/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)]" data-type="surgery">
+      <div class="flex items-start justify-between mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-surface-container-high flex items-center justify-center">
+          <span class="material-symbols-outlined text-secondary">surgical</span>
+        </div>
+        <span class="text-[10px] font-bold uppercase tracking-widest bg-surface-container-high text-secondary px-3 py-1 rounded-full">Surgery</span>
+      </div>
+      <h3 class="font-headline font-bold text-on-surface text-lg mb-1">Appendectomy – Laparoscopic</h3>
+      <p class="text-sm text-secondary mb-4">Memorial Hospital · Dr. James Kelley</p>
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-outline font-label">Aug 12, 2022</span>
+        <div class="flex items-center gap-2">
+          <span class="flex items-center gap-1 text-xs text-teal-600 font-semibold"><span class="material-symbols-outlined text-sm">lock</span> Encrypted</span>
+          <button class="text-primary hover:underline text-xs font-bold ml-2">View →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Record Card: Lab -->
+    <div class="record-card bg-surface-container-lowest rounded-[1.5rem] p-6 border border-outline-variant/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)]" data-type="lab">
+      <div class="flex items-start justify-between mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary">monitor_heart</span>
+        </div>
+        <span class="text-[10px] font-bold uppercase tracking-widest bg-secondary-container text-primary px-3 py-1 rounded-full">Lab Report</span>
+      </div>
+      <h3 class="font-headline font-bold text-on-surface text-lg mb-1">HbA1c Blood Test – 6.8%</h3>
+      <p class="text-sm text-secondary mb-4">Quest Diagnostics · Dr. Emily Rhodes</p>
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-outline font-label">Nov 3, 2023</span>
+        <div class="flex items-center gap-2">
+          <span class="flex items-center gap-1 text-xs text-teal-600 font-semibold"><span class="material-symbols-outlined text-sm">lock</span> Encrypted</span>
+          <button class="text-primary hover:underline text-xs font-bold ml-2">View →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Record Card: Prescription -->
+    <div class="record-card bg-surface-container-lowest rounded-[1.5rem] p-6 border border-outline-variant/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)]" data-type="prescription">
+      <div class="flex items-start justify-between mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-tertiary-fixed flex items-center justify-center">
+          <span class="material-symbols-outlined text-tertiary">vaccines</span>
+        </div>
+        <span class="text-[10px] font-bold uppercase tracking-widest bg-tertiary-fixed text-tertiary px-3 py-1 rounded-full">Prescription</span>
+      </div>
+      <h3 class="font-headline font-bold text-on-surface text-lg mb-1">Metformin 500mg – Daily</h3>
+      <p class="text-sm text-secondary mb-4">City Clinic · Dr. Alan Brooks</p>
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-outline font-label">Sep 19, 2023</span>
+        <div class="flex items-center gap-2">
+          <span class="flex items-center gap-1 text-xs text-teal-600 font-semibold"><span class="material-symbols-outlined text-sm">lock</span> Encrypted</span>
+          <button class="text-primary hover:underline text-xs font-bold ml-2">View →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Upload Modal -->
+<div id="upload-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+  <div class="bg-white rounded-[2rem] p-10 w-full max-w-md shadow-2xl relative">
+    <button onclick="closeUpload()"
+      class="absolute top-6 right-6 text-outline hover:text-on-surface transition-colors">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <div class="w-14 h-14 rounded-2xl bg-secondary-container flex items-center justify-center mb-6">
+      <span class="material-symbols-outlined text-primary text-3xl">cloud_upload</span>
+    </div>
+    <h2 class="font-headline text-2xl font-bold text-primary mb-2">Upload Medical Record</h2>
+    <p class="text-secondary text-sm mb-6">Your file will be encrypted and anchored to the blockchain.</p>
+
+    <!-- Drop zone -->
+    <div id="drop-zone"
+      class="border-2 border-dashed border-outline-variant/40 rounded-2xl p-8 text-center mb-6 hover:border-primary/40 transition-colors cursor-pointer"
+      onclick="document.getElementById('file-input').click()"
+      ondragover="event.preventDefault(); this.classList.add('border-primary','bg-primary/5')"
+      ondragleave="this.classList.remove('border-primary','bg-primary/5')"
+      ondrop="handleDrop(event)">
+      <span class="material-symbols-outlined text-4xl text-outline mb-3 block">upload_file</span>
+      <p id="drop-label" class="text-sm text-secondary font-medium">Drag &amp; drop or <span class="text-primary font-bold">browse files</span></p>
+      <p class="text-xs text-outline mt-1">PDF, DICOM, JPG up to 50MB</p>
+    </div>
+    <input id="file-input" type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png,.dcm" onchange="handleFileSelect(this)"/>
+
+    <!-- File preview -->
+    <div id="file-preview" class="hidden mb-4 flex items-center gap-3 bg-secondary-container/30 p-3 rounded-xl">
+      <span class="material-symbols-outlined text-primary">description</span>
+      <span id="file-name" class="text-sm font-medium text-on-surface truncate flex-1"></span>
+      <button onclick="clearFile()" class="text-outline hover:text-error transition-colors text-xs font-bold">✕</button>
+    </div>
+
+    <div class="space-y-3 mb-6">
+      <input id="u-title" type="text" placeholder="Record Title (e.g. Blood Test Results)"
+        class="w-full px-4 py-3 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary/20 text-on-surface text-sm placeholder:text-outline/60"/>
+      <select id="u-type" class="w-full px-4 py-3 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary/20 text-on-surface text-sm">
+        <option value="">Select Record Type</option>
+        <option value="lab">Lab Report</option>
+        <option value="prescription">Prescription</option>
+        <option value="imaging">Imaging</option>
+        <option value="surgery">Surgery</option>
+        <option value="other">Other</option>
+      </select>
+      <input id="u-doctor" type="text" placeholder="Doctor / Provider Name"
+        class="w-full px-4 py-3 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary/20 text-on-surface text-sm placeholder:text-outline/60"/>
+    </div>
+    <button onclick="uploadRecord()" class="w-full bg-primary text-on-primary py-4 rounded-xl font-headline font-bold text-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+      <span class="material-symbols-outlined text-base">lock</span>
+      Encrypt &amp; Upload to Blockchain
+    </button>
+  </div>
+</div>
+
+<!-- View Record Modal -->
+<div id="view-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+  <div class="bg-white rounded-[2rem] w-full max-w-lg shadow-2xl relative overflow-hidden">
+    <!-- Header -->
+    <div id="view-header" class="bg-primary p-8 relative">
+      <button onclick="closeView()" class="absolute top-5 right-5 text-white/70 hover:text-white transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div id="view-icon" class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
+        <span class="material-symbols-outlined text-white text-2xl">description</span>
+      </div>
+      <p id="view-type-badge" class="text-xs font-bold uppercase tracking-widest text-white/60 mb-1">Lab Report</p>
+      <h2 id="view-title" class="font-headline text-2xl font-bold text-white">Record Title</h2>
+    </div>
+    <!-- Body -->
+    <div class="p-8 space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-surface-container-low p-4 rounded-2xl">
+          <p class="text-xs font-label uppercase tracking-widest text-outline mb-1">Doctor</p>
+          <p id="view-doctor" class="font-semibold text-on-surface text-sm">—</p>
+        </div>
+        <div class="bg-surface-container-low p-4 rounded-2xl">
+          <p class="text-xs font-label uppercase tracking-widest text-outline mb-1">Date</p>
+          <p id="view-date" class="font-semibold text-on-surface text-sm">—</p>
+        </div>
+      </div>
+      <div class="bg-surface-container-low p-4 rounded-2xl">
+        <p class="text-xs font-label uppercase tracking-widest text-outline mb-1">File</p>
+        <p id="view-file" class="font-semibold text-on-surface text-sm flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm text-primary">attach_file</span>
+          <span id="view-file-name">N/A</span>
+        </p>
+      </div>
+      <div class="bg-surface-container-low p-4 rounded-2xl">
+        <p class="text-xs font-label uppercase tracking-widest text-outline mb-2">Blockchain Hash</p>
+        <p id="view-hash" class="font-mono text-xs text-secondary break-all leading-relaxed"></p>
+      </div>
+      <div class="flex items-center gap-2 bg-teal-50 p-3 rounded-xl border border-teal-100">
+        <span class="material-symbols-outlined text-primary text-sm">verified</span>
+        <span class="text-xs text-primary font-semibold">Verified on Ethereum · Block #1,204,882</span>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button id="view-download-btn" onclick="downloadRecord()" class="flex-1 bg-primary text-on-primary py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all">
+          <span class="material-symbols-outlined text-base">download</span>
+          Download
+        </button>
+        <button onclick="closeView()" class="flex-1 border border-outline-variant/30 text-secondary py-3 rounded-xl font-bold text-sm hover:bg-surface-container-low transition-all">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="w-full border-t border-slate-200/50 bg-slate-50 mt-auto">
+  <div class="flex flex-col md:flex-row justify-between items-center w-full px-12 py-12 gap-8 max-w-screen-2xl mx-auto">
+    <div>
+      <span class="text-lg font-bold text-teal-900 font-headline">MediChain</span>
+      <p class="text-slate-500 text-sm mt-1">© 2024 MediChain. Secure Blockchain Healthcare.</p>
+    </div>
+    <div class="flex flex-wrap justify-center gap-8">
+      <a class="text-slate-500 hover:text-teal-600 transition-colors text-sm font-label uppercase tracking-widest" href="#">Privacy Policy</a>
+      <a class="text-slate-500 hover:text-teal-600 transition-colors text-sm font-label uppercase tracking-widest" href="#">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Record data store ───────────────────────────────────────────
+  const RECORD_TYPES = {
+    lab:          { label: 'Lab Report',   bg: 'bg-secondary-container', text: 'text-primary',    icon: 'biotech' },
+    prescription: { label: 'Prescription', bg: 'bg-tertiary-fixed',      text: 'text-tertiary',   icon: 'medication' },
+    imaging:      { label: 'Imaging',      bg: 'bg-error-container',     text: 'text-on-error-container', icon: 'radiology' },
+    surgery:      { label: 'Surgery',      bg: 'bg-surface-container-high', text: 'text-secondary', icon: 'surgical' },
+    other:        { label: 'Record',       bg: 'bg-surface-container',   text: 'text-secondary',  icon: 'description' },
+  };
+
+  const records = [
+    { id:1, title:'Complete Blood Count (CBC)',    type:'lab',          doctor:'Quest Diagnostics · Dr. Emily Rhodes',  date:'Dec 14, 2023', file:'CBC_report.pdf',        hash:'0x3a4f8d12e...b9c' },
+    { id:2, title:'Lisinopril 10mg – Monthly',     type:'prescription', doctor:'SF General Hospital · Dr. Michael Torres',date:'Nov 28, 2023',file:'lisinopril_rx.pdf',     hash:'0x7c1b2a99f...e41' },
+    { id:3, title:'Chest X-Ray – AP View',         type:'imaging',      doctor:'Radiology Center · Dr. Priya Nair',     date:'Oct 5, 2023',  file:'chest_xray.dcm',        hash:'0xab12cc03d...f78' },
+    { id:4, title:'Appendectomy – Laparoscopic',   type:'surgery',      doctor:'Memorial Hospital · Dr. James Kelley',  date:'Aug 12, 2022', file:'appendectomy_report.pdf',hash:'0x55ef9a21b...301' },
+    { id:5, title:'HbA1c Blood Test – 6.8%',       type:'lab',          doctor:'Quest Diagnostics · Dr. Emily Rhodes',  date:'Nov 3, 2023',  file:'hba1c_lab.pdf',          hash:'0x92dc4b77c...a19' },
+    { id:6, title:'Metformin 500mg – Daily',        type:'prescription', doctor:'City Clinic · Dr. Alan Brooks',         date:'Sep 19, 2023', file:'metformin_rx.pdf',       hash:'0xf03e11d8a...b56' },
+  ];
+
+  let selectedFile = null;
+  let currentRecord = null;
+
+  // ── Upload modal ─────────────────────────────────────────────────
+  function closeUpload() {
+    document.getElementById('upload-modal').classList.add('hidden');
+    clearFile();
+    document.getElementById('u-title').value = '';
+    document.getElementById('u-type').value  = '';
+    document.getElementById('u-doctor').value= '';
+  }
+
+  function handleFileSelect(input) {
+    if (input.files && input.files[0]) setFile(input.files[0]);
+  }
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('drop-zone').classList.remove('border-primary','bg-primary/5');
+    if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+  }
+  function setFile(file) {
+    selectedFile = file;
+    document.getElementById('file-name').textContent = file.name;
+    document.getElementById('file-preview').classList.remove('hidden');
+    document.getElementById('drop-label').textContent = 'File selected ✓';
+  }
+  function clearFile() {
+    selectedFile = null;
+    document.getElementById('file-input').value = '';
+    document.getElementById('file-preview').classList.add('hidden');
+    document.getElementById('drop-label').innerHTML = 'Drag &amp; drop or <span class="text-primary font-bold">browse files</span>';
+  }
+
+  function uploadRecord() {
+    const title  = document.getElementById('u-title').value.trim();
+    const type   = document.getElementById('u-type').value;
+    const doctor = document.getElementById('u-doctor').value.trim();
+    if (!title)  { showToast('Please enter a record title.', true);  return; }
+    if (!type)   { showToast('Please select a record type.', true);  return; }
+    if (!doctor) { showToast('Please enter a doctor name.', true);   return; }
+
+    // Simulate blockchain upload with a progress toast
+    showToast('Encrypting & uploading to blockchain…');
+
+    setTimeout(() => {
+      const now  = new Date();
+      const date = now.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+      const hash = '0x' + Array.from({length:8}, () => Math.floor(Math.random()*0xffff).toString(16).padStart(4,'0')).join('') + '...';
+      const id   = Date.now();
+      const rec  = {
+        id, title, type, doctor,
+        date,
+        file: selectedFile ? selectedFile.name : 'uploaded_record.pdf',
+        hash
+      };
+      records.push(rec);
+      addCardToGrid(rec);
+      updateCount();
+      closeUpload();
+      showToast('Record uploaded & verified on blockchain!');
+    }, 1800);
+  }
+
+  function addCardToGrid(rec) {
+    const t = RECORD_TYPES[rec.type] || RECORD_TYPES.other;
+    const card = document.createElement('div');
+    card.className = 'record-card bg-surface-container-lowest rounded-[1.5rem] p-6 border border-outline-variant/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)]';
+    card.dataset.type = rec.type;
+    card.innerHTML = `
+      <div class="flex items-start justify-between mb-4">
+        <div class="w-12 h-12 rounded-2xl ${t.bg} flex items-center justify-center">
+          <span class="material-symbols-outlined ${t.text}">${t.icon}</span>
+        </div>
+        <span class="text-[10px] font-bold uppercase tracking-widest ${t.bg} ${t.text} px-3 py-1 rounded-full">${t.label}</span>
+      </div>
+      <h3 class="font-headline font-bold text-on-surface text-lg mb-1">${rec.title}</h3>
+      <p class="text-sm text-secondary mb-4">${rec.doctor}</p>
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-outline font-label">${rec.date}</span>
+        <div class="flex items-center gap-2">
+          <span class="flex items-center gap-1 text-xs text-teal-600 font-semibold"><span class="material-symbols-outlined text-sm">lock</span> Encrypted</span>
+          <button onclick="viewRecord(${rec.id})" class="text-primary hover:underline text-xs font-bold ml-2">View →</button>
+        </div>
+      </div>`;
+    document.getElementById('records-grid').prepend(card);
+  }
+
+  function updateCount() {
+    const visible = document.querySelectorAll('#records-grid [data-type]:not([style*="none"])').length;
+    document.getElementById('record-count').textContent = visible + ' record' + (visible !== 1 ? 's' : '');
+  }
+
+  // ── View record modal ────────────────────────────────────────────
+  function viewRecord(id) {
+    const rec = records.find(r => r.id === id);
+    if (!rec) return;
+    currentRecord = rec;
+    const t = RECORD_TYPES[rec.type] || RECORD_TYPES.other;
+    document.getElementById('view-type-badge').textContent = t.label;
+    document.getElementById('view-title').textContent      = rec.title;
+    document.getElementById('view-doctor').textContent     = rec.doctor;
+    document.getElementById('view-date').textContent       = rec.date;
+    document.getElementById('view-file-name').textContent  = rec.file;
+    document.getElementById('view-hash').textContent       = rec.hash;
+    document.getElementById('view-modal').classList.remove('hidden');
+  }
+
+  function closeView() {
+    document.getElementById('view-modal').classList.add('hidden');
+    currentRecord = null;
+  }
+
+  function downloadRecord() {
+    if (!currentRecord) return;
+    // Create a dummy text blob to simulate a download
+    const content = `MediChain Medical Record\n========================\nTitle:   ${currentRecord.title}\nDoctor:  ${currentRecord.doctor}\nDate:    ${currentRecord.date}\nType:    ${(RECORD_TYPES[currentRecord.type]||RECORD_TYPES.other).label}\nHash:    ${currentRecord.hash}\n\n[Encrypted record contents — decryption requires patient private key]\n`;
+    const blob = new Blob([content], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = currentRecord.file;
+    link.click();
+    showToast('Record downloaded!');
+  }
+
+  // ── Wire existing "View →" buttons ───────────────────────────────
+  // Attach IDs from records array to existing static cards on load
+  window.addEventListener('DOMContentLoaded', () => {
+    const staticBtns = document.querySelectorAll('#records-grid .record-card');
+    staticBtns.forEach((card, i) => {
+      const btn = card.querySelector('button');
+      if (btn && records[i]) {
+        btn.setAttribute('onclick', `viewRecord(${records[i].id})`);
+      }
+    });
+    updateCount();
+    // Auto-open upload modal if navigated with #upload
+    if (window.location.hash === '#upload') {
+      document.getElementById('upload-modal').classList.remove('hidden');
+    }
+  });
+
+  // ── Filter ───────────────────────────────────────────────────────
+  function filterRecords(type) {
+    const cards = document.querySelectorAll('#records-grid [data-type]');
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      const active = btn.dataset.filter === type;
+      btn.classList.toggle('bg-primary', active);
+      btn.classList.toggle('text-on-primary', active);
+      btn.classList.toggle('bg-surface-container', !active);
+      btn.classList.toggle('text-secondary', !active);
+    });
+    let visible = 0;
+    cards.forEach(card => {
+      const show = type === 'all' || card.dataset.type === type;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    document.getElementById('record-count').textContent = visible + ' record' + (visible !== 1 ? 's' : '');
+  }
+
+  // ── Search ───────────────────────────────────────────────────────
+  document.getElementById('search-input').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    const cards = document.querySelectorAll('#records-grid [data-type]');
+    let visible = 0;
+    cards.forEach(card => {
+      const match = card.innerText.toLowerCase().includes(q);
+      card.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    document.getElementById('record-count').textContent = visible + ' record' + (visible !== 1 ? 's' : '');
+  });
+
+  // ── Toast ────────────────────────────────────────────────────────
+  function showToast(msg, isError = false) {
+    const t = document.createElement('div');
+    t.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full font-semibold text-sm shadow-xl transition-all ' +
+      (isError ? 'bg-error text-white' : 'bg-primary text-white');
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+  }
+</script>
+</body></html>

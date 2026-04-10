@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediChain | My Access Requests</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#005f6c", "primary-container": "#007a8a", "on-primary": "#ffffff",
+          "on-primary-container": "#daf8ff", "secondary": "#4b6268",
+          "secondary-container": "#cee7ee", "on-secondary-container": "#51686e",
+          "tertiary": "#004ec0", "tertiary-container": "#2767e3", "tertiary-fixed": "#dae2ff",
+          "surface": "#f8fafb", "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f2f4f5", "surface-container": "#eceeef",
+          "surface-container-high": "#e6e8e9", "surface-container-highest": "#e1e3e4",
+          "on-surface": "#191c1d", "on-surface-variant": "#3e494b",
+          "outline": "#6e797b", "outline-variant": "#bdc8cb",
+          "error": "#ba1a1a", "error-container": "#ffdad6",
+          "on-error": "#ffffff", "on-error-container": "#93000a",
+          "inverse-surface": "#2e3132", "inverse-on-surface": "#eff1f2",
+          "primary-fixed": "#a0efff", "primary-fixed-dim": "#7ad4e5",
+        },
+        fontFamily: { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .font-headline { font-family: 'Manrope', sans-serif; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; vertical-align: middle; }
+  .card-in { animation: slideUp .35s ease both; }
+  @keyframes slideUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+</style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+
+<!-- Navbar -->
+<nav class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,95,108,0.06)]">
+  <div class="grid grid-cols-3 items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+    <a href="../landing_page/landingpage.html" class="text-2xl font-bold tracking-tighter text-teal-800 font-headline">MediChain</a>
+    <div class="hidden md:flex items-center justify-center gap-6">
+      <a class="text-slate-600 hover:text-teal-700 font-medium text-sm tracking-tight transition-all duration-300" href="../dashboard/code.html">Dashboard</a>
+      <a class="text-slate-600 hover:text-teal-700 font-medium text-sm tracking-tight transition-all duration-300" href="../records/records.html">Records</a>
+      <a class="text-teal-800 border-b-2 border-teal-600 pb-1 font-medium text-sm tracking-tight" href="../patient_requests/patientrequests.html">Requests</a>
+      <a class="text-slate-600 hover:text-teal-700 font-medium text-sm tracking-tight transition-all duration-300" href="../insurance_claim/insuranceclaim.html">Insurance</a>
+    </div>
+    <div class="flex items-center gap-4 justify-end">
+      <button class="material-symbols-outlined p-2 text-slate-600 hover:bg-teal-50/50 rounded-full transition-all">notifications</button>
+      <a href="../emergency_qr_feature/emerqr.html" class="bg-primary hover:bg-primary-container text-white px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 active:scale-95 shadow-lg shadow-primary/20">
+        Emergency QR
+      </a>
+      <img alt="User profile photo" class="w-10 h-10 rounded-full border-2 border-primary-container/20"
+        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN2zqKtz9fW1SDKERxhj86PSWNUJY7yLuwyUsSq9dj-nK9-OSuLi45G2Boict4XFBCA0nAtNlmoKWf8zZaOoDe5PS4MgOK4YFrbwmxkYyTux27hsN38YVkoqpiG3O9El3wveI8nAT5jxQkSG_gi-xIPufPJXKDlBZ2Gpf3AM7gXAOhXkJy1QHoxTHQjFwFTHbsPhcdj66-KJii73o4Oahhfdz03544Z5rIENnTHxIPXeUP3oMhUTWqek7b-dF8eopjqu_pNWszSAs"/>
+    </div>
+  </div>
+</nav>
+
+<!-- Main -->
+<main class="flex-grow pt-32 pb-24 px-8 max-w-screen-2xl mx-auto w-full">
+
+  <!-- Header -->
+  <div class="mb-10">
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary-container text-primary font-label text-xs font-bold tracking-widest uppercase mb-4">
+      <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">shield_person</span>
+      Record Access Control
+    </div>
+    <h1 class="font-headline text-4xl font-extrabold text-primary tracking-tight mb-2">Access Requests</h1>
+    <p class="text-on-surface-variant text-lg max-w-2xl">Review and manage which doctors can access your medical records. You are always in control of your data.</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-10">
+    <div class="bg-surface-container-lowest rounded-[1.5rem] p-6 border border-outline-variant/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)]">
+      <p class="text-xs font-bold text-secondary font-label uppercase tracking-widest mb-2">Total Received</p>
+      <p id="stat-total"   class="text-4xl font-extrabold text-on-surface font-headline">0</p>
+    </div>
+    <div class="bg-surface-container-high rounded-[1.5rem] p-6 border border-outline-variant/10">
+      <p class="text-xs font-bold text-secondary font-label uppercase tracking-widest mb-2">Pending</p>
+      <p id="stat-pending" class="text-4xl font-extrabold text-secondary font-headline">0</p>
+    </div>
+    <div class="bg-secondary-container/40 rounded-[1.5rem] p-6 border border-outline-variant/10">
+      <p class="text-xs font-bold text-primary font-label uppercase tracking-widest mb-2">Granted</p>
+      <p id="stat-granted" class="text-4xl font-extrabold text-primary font-headline">0</p>
+    </div>
+    <div class="bg-error-container/50 rounded-[1.5rem] p-6 border border-outline-variant/10">
+      <p class="text-xs font-bold text-on-error-container font-label uppercase tracking-widest mb-2">Rejected</p>
+      <p id="stat-rejected" class="text-4xl font-extrabold text-on-error-container font-headline">0</p>
+    </div>
+  </div>
+
+  <!-- Filter + Search -->
+  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+    <div class="flex gap-2 bg-surface-container p-1 rounded-2xl flex-wrap">
+      <button onclick="applyFilter('all')"     data-tab="all"     class="tab-btn px-5 py-2 rounded-xl text-sm font-bold transition-all bg-primary text-on-primary">All</button>
+      <button onclick="applyFilter('pending')" data-tab="pending" class="tab-btn px-5 py-2 rounded-xl text-sm font-bold transition-all text-secondary hover:bg-surface-container-low">Pending</button>
+      <button onclick="applyFilter('granted')" data-tab="granted" class="tab-btn px-5 py-2 rounded-xl text-sm font-bold transition-all text-secondary hover:bg-surface-container-low">Granted</button>
+      <button onclick="applyFilter('rejected')" data-tab="rejected" class="tab-btn px-5 py-2 rounded-xl text-sm font-bold transition-all text-secondary hover:bg-surface-container-low">Rejected</button>
+    </div>
+    <div class="flex items-center bg-surface-container-low rounded-xl px-4 gap-3 border border-outline-variant/20 focus-within:border-primary/30 focus-within:ring-2 focus-within:ring-primary/10 transition-all">
+      <span class="material-symbols-outlined text-outline text-[18px]">search</span>
+      <input id="search-box" type="text" placeholder="Search by doctor or record…"
+        class="bg-transparent border-none focus:ring-0 text-sm py-3 text-on-surface placeholder:text-outline/60 w-56"
+        oninput="renderCards()"/>
+    </div>
+  </div>
+
+  <!-- Cards grid -->
+  <div id="cards-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></div>
+
+  <!-- Empty state -->
+  <div id="empty-state" class="hidden text-center py-20">
+    <div class="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-5">
+      <span class="material-symbols-outlined text-outline text-4xl">inbox</span>
+    </div>
+    <h3 class="font-headline font-bold text-on-surface text-xl mb-2">No requests here</h3>
+    <p class="text-secondary text-sm">No access requests match your current filter.</p>
+  </div>
+
+</main>
+
+<!-- Confirm modal -->
+<div id="confirm-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+  <div class="bg-white rounded-[2rem] p-8 w-full max-w-sm shadow-2xl relative text-center">
+    <button onclick="closeConfirm()" class="absolute top-5 right-5 text-outline hover:text-on-surface">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <div id="modal-icon-wrap" class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5">
+      <span id="modal-icon" class="material-symbols-outlined text-3xl"></span>
+    </div>
+    <h2 id="modal-title" class="font-headline text-xl font-bold mb-2 text-on-surface">Confirm Action</h2>
+    <p id="modal-body"  class="text-secondary text-sm mb-8 leading-relaxed"></p>
+    <div class="flex gap-3">
+      <button onclick="closeConfirm()" class="flex-1 border border-outline-variant/30 text-secondary py-3 rounded-xl font-bold text-sm hover:bg-surface-container-low transition-all">Cancel</button>
+      <button id="modal-confirm-btn" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="w-full border-t border-slate-200/50 bg-slate-50 mt-auto">
+  <div class="flex flex-col md:flex-row justify-between items-center w-full px-12 py-12 gap-8 max-w-screen-2xl mx-auto">
+    <div>
+      <span class="text-lg font-bold text-teal-900 font-headline">MediChain</span>
+      <p class="text-slate-500 text-sm mt-1">© 2024 MediChain. Secure Blockchain Healthcare.</p>
+    </div>
+    <div class="flex flex-wrap justify-center gap-8">
+      <a class="text-slate-500 hover:text-teal-600 transition-colors text-sm font-label uppercase tracking-widest" href="#">Privacy Policy</a>
+      <a class="text-slate-500 hover:text-teal-600 transition-colors text-sm font-label uppercase tracking-widest" href="#">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Request data ──────────────────────────────────────────────────
+  const REQUESTS = [
+    { id:1,  doctor:'Dr. James Kelley',   hospital:'Memorial Hospital',      record:'Complete Blood Count (CBC)',     type:'Lab Report',   date:'Apr 10, 2024', status:'pending'  },
+    { id:2,  doctor:'Dr. Emily Rhodes',   hospital:'Quest Diagnostics',       record:'Chest X-Ray — AP View',          type:'Imaging',      date:'Apr 10, 2024', status:'pending'  },
+    { id:3,  doctor:'Dr. Priya Nair',     hospital:'Radiology Center',        record:'Lisinopril 10mg — Monthly Rx',   type:'Prescription', date:'Apr 9, 2024',  status:'granted'  },
+    { id:4,  doctor:'Dr. Michael Torres', hospital:'SF General Hospital',     record:'HbA1c Blood Test — 6.8%',        type:'Lab Report',   date:'Apr 8, 2024',  status:'granted'  },
+    { id:5,  doctor:'Dr. Alan Brooks',    hospital:'City Clinic',             record:'Appendectomy — Laparoscopic',    type:'Surgery',      date:'Apr 7, 2024',  status:'rejected' },
+    { id:6,  doctor:'Dr. Sarah Okon',     hospital:'Westside Medical Center', record:'MRI Brain — Contrast',           type:'Imaging',      date:'Apr 6, 2024',  status:'granted'  },
+    { id:7,  doctor:'Dr. James Kelley',   hospital:'Memorial Hospital',       record:'Spirometry — Lung Function Test',type:'Lab Report',   date:'Apr 5, 2024',  status:'rejected' },
+    { id:8,  doctor:'Dr. Emily Rhodes',   hospital:'Quest Diagnostics',       record:'Iron Studies Panel',             type:'Lab Report',   date:'Apr 4, 2024',  status:'pending'  },
+  ];
+
+  const TYPE_ICONS  = { 'Lab Report':'biotech','Imaging':'radiology','Prescription':'medication','Surgery':'surgical','Other':'description' };
+  const STATUS_CFG  = {
+    pending:  { label:'Pending',  bg:'bg-surface-container-high',  text:'text-secondary',         icon:'schedule',     dot:'bg-outline'  },
+    granted:  { label:'Granted',  bg:'bg-secondary-container',     text:'text-primary',            icon:'check_circle', dot:'bg-primary'  },
+    rejected: { label:'Rejected', bg:'bg-error-container',         text:'text-on-error-container', icon:'cancel',       dot:'bg-error'    },
+  };
+
+  let activeFilter = 'all';
+  let pendingAction = null; // { id, action }
+
+  // ── Render ────────────────────────────────────────────────────────
+  function renderCards() {
+    const q = (document.getElementById('search-box').value || '').toLowerCase();
+    const filtered = REQUESTS.filter(r => {
+      const matchFilter = activeFilter === 'all' || r.status === activeFilter;
+      const matchSearch = !q || r.doctor.toLowerCase().includes(q) || r.record.toLowerCase().includes(q) || r.hospital.toLowerCase().includes(q);
+      return matchFilter && matchSearch;
+    });
+
+    const grid  = document.getElementById('cards-grid');
+    const empty = document.getElementById('empty-state');
+
+    if (!filtered.length) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
+    empty.classList.add('hidden');
+
+    grid.innerHTML = filtered.map(r => {
+      const s = STATUS_CFG[r.status];
+      const tIcon = TYPE_ICONS[r.type] || 'description';
+      const actions = r.status === 'pending'
+        ? `<div class="flex gap-2 pt-4 border-t border-outline-variant/10">
+            <button onclick="confirmAction(${r.id},'grant')"
+              class="flex-1 bg-primary text-on-primary py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 hover:opacity-90 active:scale-[0.98] transition-all">
+              <span class="material-symbols-outlined text-[14px]">check_circle</span>Grant Access
+            </button>
+            <button onclick="confirmAction(${r.id},'reject')"
+              class="flex-1 border border-outline-variant/30 text-secondary py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-error-container hover:text-on-error-container hover:border-transparent transition-all">
+              <span class="material-symbols-outlined text-[14px]">cancel</span>Reject
+            </button>
+          </div>`
+        : r.status === 'granted'
+        ? `<div class="flex gap-2 pt-4 border-t border-outline-variant/10">
+            <button onclick="confirmAction(${r.id},'revoke')"
+              class="flex-1 border border-outline-variant/30 text-secondary py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-error-container hover:text-on-error-container hover:border-transparent transition-all">
+              <span class="material-symbols-outlined text-[14px]">block</span>Revoke Access
+            </button>
+          </div>`
+        : `<div class="flex gap-2 pt-4 border-t border-outline-variant/10">
+            <button onclick="confirmAction(${r.id},'grant')"
+              class="flex-1 border border-outline-variant/30 text-secondary py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-secondary-container hover:text-primary hover:border-transparent transition-all">
+              <span class="material-symbols-outlined text-[14px]">undo</span>Grant Instead
+            </button>
+          </div>`;
+
+      return `
+      <div class="card-in bg-surface-container-lowest rounded-[1.5rem] p-6 border border-outline-variant/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)] flex flex-col gap-4">
+        <!-- Doctor info -->
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-primary text-[22px]">stethoscope</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="font-headline font-bold text-on-surface text-base truncate">${r.doctor}</h3>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold flex-shrink-0 ${s.bg} ${s.text}">
+                <span class="w-1.5 h-1.5 rounded-full ${s.dot} inline-block"></span>${s.label}
+              </span>
+            </div>
+            <p class="text-xs text-secondary mt-0.5">${r.hospital}</p>
+          </div>
+        </div>
+
+        <!-- Record info -->
+        <div class="bg-surface-container-low rounded-2xl p-4 flex items-center gap-3">
+          <span class="w-9 h-9 rounded-xl bg-surface-container flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-primary text-[18px]">${tIcon}</span>
+          </span>
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-on-surface truncate">${r.record}</p>
+            <p class="text-xs text-secondary">${r.type} · Requested ${r.date}</p>
+          </div>
+        </div>
+
+        <!-- Blockchain note -->
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings:'FILL' 1;">verified</span>
+          <p class="text-xs text-secondary">Decision will be recorded on Ethereum blockchain</p>
+        </div>
+
+        ${actions}
+      </div>`;
+    }).join('');
+  }
+
+  // ── Filter ────────────────────────────────────────────────────────
+  function applyFilter(f) {
+    activeFilter = f;
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      const active = btn.dataset.tab === f;
+      btn.classList.toggle('bg-primary', active);
+      btn.classList.toggle('text-on-primary', active);
+      btn.classList.toggle('text-secondary', !active);
+      btn.classList.remove('bg-surface-container-low');
+    });
+    renderCards();
+  }
+
+  // ── Confirm modal ─────────────────────────────────────────────────
+  const MODAL_CFG = {
+    grant:  { icon:'check_circle', iconBg:'bg-secondary-container', iconText:'text-primary',            title:'Grant Access?',   btnClass:'bg-primary text-on-primary',                       btnLabel:'Yes, Grant Access' },
+    reject: { icon:'cancel',       iconBg:'bg-error-container',     iconText:'text-on-error-container',   title:'Reject Request?', btnClass:'bg-error text-on-error',                          btnLabel:'Yes, Reject'       },
+    revoke: { icon:'block',        iconBg:'bg-error-container',     iconText:'text-on-error-container',   title:'Revoke Access?',  btnClass:'bg-error text-on-error',                          btnLabel:'Yes, Revoke'       },
+  };
+
+  function confirmAction(id, action) {
+    pendingAction = { id, action };
+    const r = REQUESTS.find(r => r.id === id);
+    const cfg = MODAL_CFG[action];
+    const bodyText = {
+      grant:  `You are granting <strong>Dr. ${r.doctor}</strong> access to <strong>${r.record}</strong>. This action will be logged on the blockchain.`,
+      reject: `You are rejecting <strong>Dr. ${r.doctor}</strong>'s request to access <strong>${r.record}</strong>.`,
+      revoke: `You are revoking <strong>Dr. ${r.doctor}</strong>'s access to <strong>${r.record}</strong>. They will no longer be able to view this record.`,
+    };
+
+    const iconWrap = document.getElementById('modal-icon-wrap');
+    const icon     = document.getElementById('modal-icon');
+    iconWrap.className = `w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5 ${cfg.iconBg}`;
+    icon.className  = `material-symbols-outlined text-3xl ${cfg.iconText}`;
+    icon.textContent = cfg.icon;
+    document.getElementById('modal-title').textContent = cfg.title;
+    document.getElementById('modal-body').innerHTML    = bodyText[action];
+    const btn = document.getElementById('modal-confirm-btn');
+    btn.className   = `flex-1 py-3 rounded-xl font-bold text-sm transition-all ${cfg.btnClass}`;
+    btn.textContent = cfg.btnLabel;
+    btn.onclick = () => executeAction();
+
+    document.getElementById('confirm-modal').classList.remove('hidden');
+  }
+
+  function closeConfirm() {
+    document.getElementById('confirm-modal').classList.add('hidden');
+    pendingAction = null;
+  }
+
+  function executeAction() {
+    if (!pendingAction) return;
+    const { id, action } = pendingAction;
+    const r = REQUESTS.find(r => r.id === id);
+    if (!r) { closeConfirm(); return; }
+
+    const newStatus = action === 'grant' ? 'granted' : action === 'reject' ? 'rejected' : 'rejected';
+    r.status = newStatus;
+
+    closeConfirm();
+    updateStats();
+    renderCards();
+
+    const msgs = {
+      grant:  'Access granted. Dr. ' + r.doctor + ' can now view this record.',
+      reject: 'Request rejected.',
+      revoke: 'Access revoked. Dr. ' + r.doctor + ' can no longer view this record.',
+    };
+    showToast(msgs[action]);
+  }
+
+  // ── Stats ─────────────────────────────────────────────────────────
+  function updateStats() {
+    document.getElementById('stat-total').textContent   = REQUESTS.length;
+    document.getElementById('stat-pending').textContent = REQUESTS.filter(r => r.status === 'pending').length;
+    document.getElementById('stat-granted').textContent = REQUESTS.filter(r => r.status === 'granted').length;
+    document.getElementById('stat-rejected').textContent= REQUESTS.filter(r => r.status === 'rejected').length;
+  }
+
+  // ── Toast ─────────────────────────────────────────────────────────
+  function showToast(msg, isError = false) {
+    const t = document.createElement('div');
+    t.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full font-semibold text-sm shadow-xl ' +
+      (isError ? 'bg-error text-white' : 'bg-primary text-white');
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3500);
+  }
+
+  // ── Init ──────────────────────────────────────────────────────────
+  updateStats();
+  renderCards();
+</script>
+</body></html>

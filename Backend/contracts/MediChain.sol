@@ -166,23 +166,22 @@ contract MediChain is AccessControl {
      * @return timestamp Timestamp when record was created
      */
     function accessRecord(uint256 recordId)
-        external
-        onlyAuthorized(recordId)
-        view
-        returns (
-            string memory ipfsHash,
-            string memory recordType,
-            string memory title,
-            uint256 timestamp
-        )
-    {
-        MedicalRecord storage record = medicalRecords[recordId];
-        require(record.exists, "MediChain: Record does not exist");
+    external
+    onlyAuthorized(recordId)
+    returns (
+        string memory ipfsHash,
+        string memory recordType,
+        string memory title,
+        uint256 timestamp
+    )
+{
+    MedicalRecord storage record = medicalRecords[recordId];
+    require(record.exists, "MediChain: Record does not exist");
 
-        emit RecordAccessed(recordId, msg.sender, block.timestamp);
+    emit RecordAccessed(recordId, msg.sender, block.timestamp);
 
-        return (record.ipfsHash, record.recordType, record.title, record.timestamp);
-    }
+    return (record.ipfsHash, record.recordType, record.title, record.timestamp);
+}
 
     /**
      * @dev Get all record IDs for a patient
