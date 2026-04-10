@@ -1,0 +1,30 @@
+{
+  "name": "medichain",
+  "version": "1.0.0",
+  "description": "Blockchain-based medical records management with emergency access and one-click insurance claims",
+  "main": "index.js",
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
+    "node": "npx hardhat node",
+    "deploy:local": "npx hardhat run scripts/deploy.js --network localhost",
+    "deploy:ganache": "npx hardhat run scripts/deploy.js --network ganache"
+  },
+  "keywords": [
+    "blockchain",
+    "healthcare",
+    "medical-records",
+    "ethereum",
+    "ipfs",
+    "smart-contracts"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0"
+  }
+}
