@@ -1,319 +1,331 @@
 <!DOCTYPE html>
-
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>MediChain | Emergency Patient View</title>
-<!-- Fonts & Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "tertiary-container": "#2767e3",
-                        "surface-container-highest": "#e1e3e4",
-                        "surface-bright": "#f8fafb",
-                        "tertiary-fixed": "#dae2ff",
-                        "on-tertiary": "#ffffff",
-                        "on-tertiary-fixed": "#001847",
-                        "on-surface-variant": "#3e494b",
-                        "surface-variant": "#e1e3e4",
-                        "secondary": "#4b6268",
-                        "outline-variant": "#bdc8cb",
-                        "surface-container-high": "#e6e8e9",
-                        "surface-container": "#eceeef",
-                        "secondary-fixed": "#cee7ee",
-                        "tertiary-fixed-dim": "#b2c5ff",
-                        "inverse-surface": "#2e3132",
-                        "primary-container": "#007a8a",
-                        "surface-container-low": "#f2f4f5",
-                        "surface": "#f8fafb",
-                        "on-primary-fixed-variant": "#004e59",
-                        "on-secondary-fixed-variant": "#344a50",
-                        "on-secondary-container": "#51686e",
-                        "on-error": "#ffffff",
-                        "on-tertiary-container": "#f0f2ff",
-                        "on-primary-fixed": "#001f25",
-                        "on-primary-container": "#daf8ff",
-                        "on-background": "#191c1d",
-                        "error-container": "#ffdad6",
-                        "on-secondary": "#ffffff",
-                        "on-tertiary-fixed-variant": "#0040a1",
-                        "on-primary": "#ffffff",
-                        "outline": "#6e797b",
-                        "inverse-on-surface": "#eff1f2",
-                        "secondary-fixed-dim": "#b2cbd1",
-                        "on-secondary-fixed": "#061f24",
-                        "surface-tint": "#006876",
-                        "secondary-container": "#cee7ee",
-                        "inverse-primary": "#7ad4e5",
-                        "error": "#ba1a1a",
-                        "primary-fixed-dim": "#7ad4e5",
-                        "surface-container-lowest": "#ffffff",
-                        "on-error-container": "#93000a",
-                        "on-surface": "#191c1d",
-                        "surface-dim": "#d8dadb",
-                        "primary": "#005f6c",
-                        "tertiary": "#004ec0",
-                        "primary-fixed": "#a0efff",
-                        "background": "#f8fafb"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "fontFamily": {
-                        "headline": ["Manrope"],
-                        "body": ["Inter"],
-                        "label": ["Inter"]
-                    }
-                },
-            },
-        }
-    </script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: { extend: { colors: {
+      "tertiary-container":"#2767e3","surface-container-highest":"#e1e3e4",
+      "surface-bright":"#f8fafb","tertiary-fixed":"#dae2ff","on-tertiary":"#ffffff",
+      "on-tertiary-fixed":"#001847","on-surface-variant":"#3e494b","surface-variant":"#e1e3e4",
+      "secondary":"#4b6268","outline-variant":"#bdc8cb","surface-container-high":"#e6e8e9",
+      "surface-container":"#eceeef","secondary-fixed":"#cee7ee","tertiary-fixed-dim":"#b2c5ff",
+      "inverse-surface":"#2e3132","primary-container":"#007a8a","surface-container-low":"#f2f4f5",
+      "surface":"#f8fafb","on-primary-fixed-variant":"#004e59","on-secondary-fixed-variant":"#344a50",
+      "on-secondary-container":"#51686e","on-error":"#ffffff","on-tertiary-container":"#f0f2ff",
+      "on-primary-fixed":"#001f25","on-primary-container":"#daf8ff","on-background":"#191c1d",
+      "error-container":"#ffdad6","on-secondary":"#ffffff","on-tertiary-fixed-variant":"#0040a1",
+      "on-primary":"#ffffff","outline":"#6e797b","inverse-on-surface":"#eff1f2",
+      "secondary-fixed-dim":"#b2cbd1","on-secondary-fixed":"#061f24","surface-tint":"#006876",
+      "secondary-container":"#cee7ee","inverse-primary":"#7ad4e5","error":"#ba1a1a",
+      "primary-fixed-dim":"#7ad4e5","surface-container-lowest":"#ffffff","on-error-container":"#93000a",
+      "on-surface":"#191c1d","surface-dim":"#d8dadb","primary":"#005f6c","tertiary":"#004ec0",
+      "primary-fixed":"#a0efff","background":"#f8fafb"
+    }, fontFamily:{"headline":["Manrope"],"body":["Inter"],"label":["Inter"]}}}
+  }
+</script>
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
-        }
-        .scanner-line {
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #005f6c, transparent);
-            position: absolute;
-            width: 100%;
-            top: 0;
-            animation: scan 3s ease-in-out infinite;
-        }
-        @keyframes scan {
-            0%, 100% { top: 0%; opacity: 0; }
-            50% { top: 100%; opacity: 1; }
-        }
-    </style>
+  .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; vertical-align:middle; }
+  body { font-family:'Inter',sans-serif; }
+  .font-headline { font-family:'Manrope',sans-serif; }
+  .scanner-line {
+    height:2px;
+    background:linear-gradient(90deg, transparent, #005f6c, transparent);
+    position:absolute; width:100%; top:0;
+    animation: scan 3s ease-in-out infinite;
+  }
+  @keyframes scan { 0%,100%{top:0%;opacity:0} 50%{top:100%;opacity:1} }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .fade-up{animation:fadeUp .35s ease both;}
+  .allergy-tag { @apply bg-on-error-container text-white px-4 py-2 rounded-xl font-bold font-label uppercase text-sm tracking-wide; }
+</style>
 </head>
 <body class="bg-surface font-body text-on-surface selection:bg-primary-container selection:text-on-primary-container">
-<!-- Top Navigation Bar -->
-<header class="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,95,108,0.06)]">
-<nav class="grid grid-cols-3 items-center h-16 px-8 max-w-[1440px] mx-auto">
-<a href="../landing_page/landingpage.html" class="text-xl font-bold text-cyan-900 dark:text-cyan-100 font-headline tracking-tight">MediChain Doctor Portal</a>
-<div class="hidden md:flex gap-6 items-center justify-center">
-<a class="font-manrope font-semibold tracking-tight text-cyan-700 dark:text-cyan-300 border-b-2 border-cyan-700 dark:border-cyan-300 pb-1" href="../doctor_dashboard/doctordashboard.html">Back to Portal</a>
-<a class="font-manrope font-semibold tracking-tight text-slate-500 dark:text-slate-400 hover:text-cyan-600 transition-colors" href="../records/records.html">Records</a>
-<a class="font-manrope font-semibold tracking-tight text-slate-500 dark:text-slate-400 hover:text-cyan-600 transition-colors" href="#">Schedule</a>
-<a class="font-manrope font-semibold tracking-tight text-slate-500 dark:text-slate-400 hover:text-cyan-600 transition-colors" href="#">Messages</a>
-</div>
-<div class="flex items-center gap-4 justify-end">
-<div class="flex items-center gap-2 text-slate-500">
-<span class="material-symbols-outlined p-2 rounded-full hover:bg-cyan-50/50 cursor-pointer">notifications</span>
-<span class="material-symbols-outlined p-2 rounded-full hover:bg-cyan-50/50 cursor-pointer">settings</span>
-</div>
-<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-secondary-container">
-<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0fswyWacewAI3Rs8CBsC-R_4YCzyFjBTEwKhKxWV0isBePniNhiShHv-Fz7mGheerdplzjxFIAjO-Z4Fa4Rw1GCojGwtrB3VkVZ2tWAj9eunvhfx6pLx7DVmda6LqfBNMtc5wOHScLjEOBfjMJ_3DpR9etD7lBcrOjxeMPV6ZYpnyasypxwA3buPJBRRVXPj0FA76gAZEqG9v3_7nUjEVmRUJOyH5yewKIdabN7nlHs9VJ1yG6pJ3xc8kdbD7iOjkei52mMg88dE"/>
-</div>
-</div>
-</nav>
+
+<!-- Navbar -->
+<header class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,95,108,0.06)]">
+  <nav class="grid grid-cols-3 items-center h-16 px-8 max-w-[1440px] mx-auto">
+    <a href="../landing_page/landingpage.html" class="text-xl font-bold text-cyan-900 font-headline tracking-tight">MediChain Doctor Portal</a>
+    <div class="hidden md:flex gap-6 items-center justify-center">
+      <a class="font-headline font-semibold tracking-tight text-cyan-700 border-b-2 border-cyan-700 pb-1" href="../doctor_dashboard/doctordashboard.html">Back to Portal</a>
+      <a class="font-headline font-semibold tracking-tight text-slate-500 hover:text-cyan-600 transition-colors" href="../records/records.html">Records</a>
+    </div>
+    <div class="flex items-center gap-4 justify-end">
+      <div class="flex items-center gap-2 text-slate-500">
+        <span class="material-symbols-outlined p-2 rounded-full hover:bg-cyan-50/50 cursor-pointer">notifications</span>
+        <span class="material-symbols-outlined p-2 rounded-full hover:bg-cyan-50/50 cursor-pointer">settings</span>
+      </div>
+    </div>
+  </nav>
 </header>
+
 <main class="pt-24 pb-12 px-8 max-w-[1440px] mx-auto">
-<!-- Emergency Banner -->
-<div class="mb-10 bg-error text-on-error px-6 py-4 rounded-xl flex items-center justify-between shadow-lg shadow-error/10">
-<div class="flex items-center gap-4">
-<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">emergency_home</span>
-<div>
-<h2 class="font-headline font-extrabold text-lg uppercase tracking-widest">Emergency Access Granted</h2>
-<p class="text-sm opacity-90 font-medium">Accessed via Emergency QR · Standard encryption bypassed for immediate life-saving intervention. Audit log: #TR-99021</p>
-</div>
-</div>
-<div class="flex items-center gap-2 bg-on-error/10 px-3 py-1.5 rounded-full border border-on-error/20">
-<span class="material-symbols-outlined text-[18px]">verified_user</span>
-<span class="text-xs font-bold font-label uppercase tracking-tighter">Verified Patient Data · Blockchain Confirmed</span>
-</div>
-</div>
-<!-- Search & Scan Section -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12 items-start">
-<div class="lg:col-span-8">
-<div class="bg-surface-container-low p-1 rounded-full flex items-center group focus-within:ring-2 focus-within:ring-primary/20 transition-all">
-<div class="pl-6 flex items-center gap-3">
-<span class="material-symbols-outlined text-outline">search</span>
-<input class="bg-transparent border-none focus:ring-0 w-full font-body text-on-surface placeholder:text-outline-variant py-4" placeholder="Search patient by ID or name" type="text"/>
-</div>
-<button class="mr-1 bg-white hover:bg-surface-container-high text-primary px-6 py-3 rounded-full font-headline font-bold flex items-center gap-2 transition-all shadow-sm">
-<span class="material-symbols-outlined">qr_code_scanner</span>
-                        Scan QR
-                    </button>
-</div>
-</div>
-<div class="lg:col-span-4 h-full">
-<!-- Action Buttons Cluster -->
-<div class="flex flex-wrap gap-3 h-full items-center justify-end">
-<button class="bg-primary-container text-on-primary-container px-6 py-4 rounded-xl font-headline font-bold flex items-center gap-2 hover:bg-primary transition-all">
-<span class="material-symbols-outlined">assignment_add</span>
-                        Add New Record
-                    </button>
-<button class="bg-surface-container-lowest text-primary border border-outline-variant/30 px-6 py-4 rounded-xl font-headline font-bold flex items-center gap-2 hover:bg-surface-container-low transition-all shadow-sm">
-<span class="material-symbols-outlined">verified_user</span>
-                        Verified via Blockchain
-                    </button>
-</div>
-</div>
-</div>
-<!-- Dashboard Bento Grid -->
-<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
-<!-- Patient Profile & Blood Type (Large Asymmetric Column) -->
-<div class="md:col-span-4 space-y-8">
-<div class="bg-surface-container-lowest p-8 rounded-[2rem] shadow-[0_20px_40px_rgba(0,95,108,0.06)] border border-outline-variant/10">
-<div class="flex flex-col items-center text-center">
-<div class="w-32 h-32 rounded-full overflow-hidden mb-6 border-4 border-secondary-container">
-<img alt="Patient portrait" class="w-full h-full object-cover" data-alt="high-quality medical portrait of an elderly man with silver hair, professional studio lighting, neutral clinical background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDyzyJT4DCF7-QpALYNGwQDNVOBQOcwV6ibfj3ZDalIDe3Cth8shMe-0Upu3W0n8ZHaaDygsL5w0qsfp0mnpxIzK-dBigoK97mxgsqGfWjHkyRAsl8nE2Ow5xAC4Or-Za8WQzwtrWO3c7uX-E7uhSv4JUp_0OPfsQWHTGpgt6g1cw1tg-vH3VIM7Y2A4_i6JQ0zWFbaKv36VE6CwBitJwknVSE60cb6vaTWnqoOnA5VWCOoHIS2wz-LZV1WmdiCm0NOZLnR9dlGOM"/>
-</div>
-<h3 class="font-headline font-extrabold text-2xl text-primary">Jonathan R. Sterling</h3>
-<p class="text-secondary font-medium font-label uppercase tracking-widest text-xs mt-1">ID: #PX-88219-BK</p>
-<div class="mt-8 grid grid-cols-2 gap-4 w-full">
-<div class="bg-primary-container/10 p-4 rounded-2xl border border-primary-container/20">
-<span class="block text-xs font-bold text-primary font-label uppercase tracking-widest mb-1">Blood Group</span>
-<span class="text-3xl font-extrabold text-primary font-headline">O-Positive</span>
-</div>
-<div class="bg-surface-container-low p-4 rounded-2xl">
-<span class="block text-xs font-bold text-secondary font-label uppercase tracking-widest mb-1">Age</span>
-<span class="text-3xl font-extrabold text-on-surface font-headline">64</span>
-</div>
-</div>
-</div>
-</div>
-<!-- Emergency QR Context Panel -->
-<div class="bg-inverse-surface p-6 rounded-[2rem] relative overflow-hidden group">
-<div class="flex justify-between items-center mb-4 relative z-10">
-<span class="text-inverse-on-surface font-headline font-bold text-sm">Accessed via Emergency QR</span>
-<div class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></div>
-</div>
-<div class="space-y-3 relative z-10">
-<div class="bg-white/10 rounded-xl p-3 flex items-center gap-3">
-<span class="material-symbols-outlined text-primary-fixed text-[20px]">qr_code_scanner</span>
-<div>
-<p class="text-white text-xs font-bold font-label uppercase tracking-widest">QR Scan Timestamp</p>
-<p class="text-white/60 text-xs font-label">Today · Emergency Protocol Active</p>
-</div>
-</div>
-<div class="bg-white/10 rounded-xl p-3 flex items-center gap-3">
-<span class="material-symbols-outlined text-primary-fixed text-[20px]">lock_open</span>
-<div>
-<p class="text-white text-xs font-bold font-label uppercase tracking-widest">Access Level</p>
-<p class="text-white/60 text-xs font-label">Read-only · Emergency Fields Only</p>
-</div>
-</div>
-<div class="bg-white/10 rounded-xl p-3 flex items-center gap-3">
-<span class="material-symbols-outlined text-primary-fixed text-[20px]">verified_user</span>
-<div>
-<p class="text-white text-xs font-bold font-label uppercase tracking-widest">Blockchain Verification</p>
-<p class="text-white/60 text-xs font-label">Hash confirmed · Immutable record</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- Medical Data (Central Column) -->
-<div class="md:col-span-8 space-y-8">
-<!-- Red Alert: Allergies -->
-<div class="bg-error-container p-8 rounded-[2rem] border border-error/10 relative overflow-hidden">
-<div class="flex items-start gap-6 relative z-10">
-<div class="bg-error text-on-error w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg shadow-error/20">
-<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">warning</span>
-</div>
-<div class="flex-1">
-<h4 class="font-headline font-extrabold text-xl text-on-error-container mb-4">CRITICAL ALLERGIES</h4>
-<div class="flex flex-wrap gap-3">
-<span class="bg-on-error-container text-white px-4 py-2 rounded-xl font-bold font-label uppercase text-sm tracking-wide">Penicillin (Severe)</span>
-<span class="bg-on-error-container text-white px-4 py-2 rounded-xl font-bold font-label uppercase text-sm tracking-wide">Latex</span>
-<span class="bg-on-error-container text-white px-4 py-2 rounded-xl font-bold font-label uppercase text-sm tracking-wide">Ciprofloxacin</span>
-</div>
-</div>
-</div>
-<div class="absolute right-[-20px] top-[-20px] opacity-[0.03]">
-<span class="material-symbols-outlined text-[200px]">healing</span>
-</div>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-<!-- Medical Conditions -->
-<div class="bg-surface-container-lowest p-8 rounded-[2rem] shadow-[0_20px_40px_rgba(0,95,108,0.06)] border border-outline-variant/10">
-<div class="flex items-center gap-3 mb-6">
-<span class="material-symbols-outlined text-primary-container text-[28px]">clinical_notes</span>
-<h4 class="font-headline font-extrabold text-lg text-primary">Patient Conditions</h4>
-</div>
-<ul class="space-y-4">
-<li class="flex items-start gap-3 p-4 bg-surface-container-low rounded-2xl">
-<span class="material-symbols-outlined text-primary-container text-[18px] mt-0.5">check_circle</span>
-<div>
-<span class="block font-bold text-on-surface">Type 2 Diabetes</span>
-<span class="text-xs text-secondary font-medium">Diagnosed Oct 2018</span>
-</div>
-</li>
-<li class="flex items-start gap-3 p-4 bg-surface-container-low rounded-2xl">
-<span class="material-symbols-outlined text-primary-container text-[18px] mt-0.5">check_circle</span>
-<div>
-<span class="block font-bold text-on-surface">Hypertension (Stage 1)</span>
-<span class="text-xs text-secondary font-medium">Medication: Lisinopril</span>
-</div>
-</li>
-<li class="flex items-start gap-3 p-4 bg-surface-container-low rounded-2xl">
-<span class="material-symbols-outlined text-primary-container text-[18px] mt-0.5">check_circle</span>
-<div>
-<span class="block font-bold text-on-surface">Chronic Bronchitis</span>
-<span class="text-xs text-secondary font-medium">Seasonal complications</span>
-</div>
-</li>
-</ul>
-</div>
-<!-- Last Treatments -->
-<div class="bg-surface-container-lowest p-8 rounded-[2rem] shadow-[0_20px_40px_rgba(0,95,108,0.06)] border border-outline-variant/10">
-<div class="flex items-center gap-3 mb-6">
-<span class="material-symbols-outlined text-tertiary-container text-[28px]">history</span>
-<h4 class="font-headline font-extrabold text-lg text-primary">Recent Medical History</h4>
-</div>
-<div class="space-y-6">
-<div class="relative pl-8 before:content-[''] before:absolute before:left-[11px] before:top-6 before:bottom-[-24px] before:w-0.5 before:bg-outline-variant/30 last:before:hidden">
-<div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-tertiary-fixed flex items-center justify-center">
-<div class="w-2 h-2 rounded-full bg-tertiary"></div>
-</div>
-<div class="mb-1">
-<span class="text-xs font-bold text-secondary uppercase tracking-widest font-label">Dec 14, 2023</span>
-<h5 class="font-bold text-on-surface">Retinal Screening</h5>
-</div>
-<p class="text-sm text-secondary leading-relaxed">No diabetic retinopathy detected. Next scan in 12 months.</p>
-</div>
-<div class="relative pl-8">
-<div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-tertiary-fixed flex items-center justify-center">
-<div class="w-2 h-2 rounded-full bg-tertiary"></div>
-</div>
-<div class="mb-1">
-<span class="text-xs font-bold text-secondary uppercase tracking-widest font-label">Nov 28, 2023</span>
-<h5 class="font-bold text-on-surface">A1C Hb Bloodwork</h5>
-</div>
-<p class="text-sm text-secondary leading-relaxed">Result: 6.8%. Slightly elevated from previous baseline.</p>
-</div>
-</div>
-<button onclick="window.location.href='../records/records.html'" class="w-full mt-8 py-3 rounded-xl border border-primary text-primary font-headline font-bold hover:bg-primary/5 transition-all flex items-center justify-center gap-2">
-                            View Full Medical Records
-                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-</button>
-</div>
-</div>
-</div>
-</div>
+
+  <!-- No-data fallback (shown when accessed without QR) -->
+  <div id="no-data-banner" class="hidden mb-8 bg-surface-container-low rounded-xl px-6 py-4 border border-outline-variant/30 flex items-center gap-4">
+    <span class="material-symbols-outlined text-outline text-2xl">qr_code_scanner</span>
+    <div>
+      <p class="font-semibold text-on-surface">No QR data detected</p>
+      <p class="text-sm text-secondary">This page should be opened by scanning a MediChain Emergency QR. Showing demo data below.</p>
+    </div>
+  </div>
+
+  <!-- Emergency Banner -->
+  <div class="mb-10 bg-error text-on-error px-6 py-4 rounded-xl flex items-center justify-between shadow-lg shadow-error/10 fade-up">
+    <div class="flex items-center gap-4">
+      <span class="material-symbols-outlined text-[32px]" style="font-variation-settings:'FILL' 1">emergency_home</span>
+      <div>
+        <h2 class="font-headline font-extrabold text-lg uppercase tracking-widest">Emergency Access Granted</h2>
+        <p class="text-sm opacity-90 font-medium">Accessed via Emergency QR · Standard encryption bypassed for immediate life-saving intervention.</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 bg-on-error/10 px-3 py-1.5 rounded-full border border-on-error/20">
+      <span class="material-symbols-outlined text-[18px]">verified_user</span>
+      <span class="text-xs font-bold font-label uppercase tracking-tighter">Verified Patient Data · Blockchain Confirmed</span>
+    </div>
+  </div>
+
+  <!-- Bento Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-8 fade-up" style="animation-delay:.08s">
+
+    <!-- LEFT: Patient Profile -->
+    <div class="md:col-span-4 space-y-8">
+      <div class="bg-surface-container-lowest p-8 rounded-[2rem] shadow-[0_20px_40px_rgba(0,95,108,0.06)] border border-outline-variant/10">
+        <div class="flex flex-col items-center text-center">
+          <!-- Avatar initial -->
+          <div class="w-32 h-32 rounded-full overflow-hidden mb-6 border-4 border-secondary-container bg-primary flex items-center justify-center">
+            <span id="patient-initial" class="text-5xl font-extrabold text-white font-headline">?</span>
+          </div>
+          <h3 id="patient-name"  class="font-headline font-extrabold text-2xl text-primary">Loading…</h3>
+          <p  id="patient-id"    class="text-secondary font-medium font-label uppercase tracking-widest text-xs mt-1"></p>
+          <div class="mt-8 grid grid-cols-2 gap-4 w-full">
+            <div class="bg-primary-container/10 p-4 rounded-2xl border border-primary-container/20">
+              <span class="block text-xs font-bold text-primary font-label uppercase tracking-widest mb-1">Blood Group</span>
+              <span id="patient-blood" class="text-3xl font-extrabold text-primary font-headline">—</span>
+            </div>
+            <div class="bg-surface-container-low p-4 rounded-2xl">
+              <span class="block text-xs font-bold text-secondary font-label uppercase tracking-widest mb-1">Age</span>
+              <span id="patient-age" class="text-3xl font-extrabold text-on-surface font-headline">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QR Meta Panel -->
+      <div class="bg-inverse-surface p-6 rounded-[2rem] relative overflow-hidden">
+        <div class="flex justify-between items-center mb-4 relative z-10">
+          <span class="text-inverse-on-surface font-headline font-bold text-sm">Accessed via Emergency QR</span>
+          <div class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></div>
+        </div>
+        <div class="space-y-3 relative z-10">
+          <div class="bg-white/10 rounded-xl p-3 flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary-fixed text-[20px]">qr_code_scanner</span>
+            <div>
+              <p class="text-white text-xs font-bold font-label uppercase tracking-widest">QR Scan Timestamp</p>
+              <p id="scan-time" class="text-white/60 text-xs font-label">Just now · Emergency Protocol Active</p>
+            </div>
+          </div>
+          <div class="bg-white/10 rounded-xl p-3 flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary-fixed text-[20px]">lock_open</span>
+            <div>
+              <p class="text-white text-xs font-bold font-label uppercase tracking-widest">Access Level</p>
+              <p class="text-white/60 text-xs font-label">Read-only · Emergency Fields Only</p>
+            </div>
+          </div>
+          <div class="bg-white/10 rounded-xl p-3 flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary-fixed text-[20px]">verified_user</span>
+            <div>
+              <p class="text-white text-xs font-bold font-label uppercase tracking-widest">Records on File</p>
+              <p id="records-on-file" class="text-white/60 text-xs font-label">0 records</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Medical Data -->
+    <div class="md:col-span-8 space-y-8">
+
+      <!-- CRITICAL ALLERGIES -->
+      <div class="bg-error-container p-8 rounded-[2rem] border border-error/10 relative overflow-hidden">
+        <div class="flex items-start gap-6 relative z-10">
+          <div class="bg-error text-on-error w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg shadow-error/20">
+            <span class="material-symbols-outlined text-[32px]" style="font-variation-settings:'FILL' 1">warning</span>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-headline font-extrabold text-xl text-on-error-container mb-4">CRITICAL ALLERGIES</h4>
+            <div id="allergy-chips" class="flex flex-wrap gap-3">
+              <span class="bg-on-error-container text-white px-4 py-2 rounded-xl font-bold font-label uppercase text-sm">Loading…</span>
+            </div>
+          </div>
+        </div>
+        <div class="absolute right-[-20px] top-[-20px] opacity-[0.03]">
+          <span class="material-symbols-outlined text-[200px]">healing</span>
+        </div>
+      </div>
+
+      <!-- Conditions + Records -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- Medical Conditions -->
+        <div class="bg-surface-container-lowest p-8 rounded-[2rem] shadow-[0_20px_40px_rgba(0,95,108,0.06)] border border-outline-variant/10">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="material-symbols-outlined text-primary-container text-[28px]">clinical_notes</span>
+            <h4 class="font-headline font-extrabold text-lg text-primary">Patient Conditions</h4>
+          </div>
+          <ul id="conditions-list" class="space-y-4">
+            <li class="text-secondary text-sm italic">Loading…</li>
+          </ul>
+        </div>
+
+        <!-- Recent Records -->
+        <div class="bg-surface-container-lowest p-8 rounded-[2rem] shadow-[0_20px_40px_rgba(0,95,108,0.06)] border border-outline-variant/10">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="material-symbols-outlined text-tertiary-container text-[28px]">history</span>
+            <h4 class="font-headline font-extrabold text-lg text-primary">Recent Records</h4>
+          </div>
+          <div id="recent-records" class="space-y-4">
+            <p class="text-secondary text-sm italic">No records found.</p>
+          </div>
+          <button onclick="window.location.href='../records/records.html'" class="w-full mt-6 py-3 rounded-xl border border-primary text-primary font-headline font-bold hover:bg-primary/5 transition-all flex items-center justify-center gap-2">
+            View Full Medical Records
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Emergency Contact -->
+      <div class="bg-tertiary/5 p-8 rounded-[2rem] border border-tertiary/10 flex items-center justify-between gap-8">
+        <div>
+          <p class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Emergency Contact</p>
+          <p id="emergency-contact" class="text-2xl font-headline font-extrabold text-on-surface">—</p>
+        </div>
+        <a id="emergency-call-btn" href="tel:" class="flex items-center gap-2 bg-tertiary text-on-tertiary px-6 py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-all">
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1">phone_in_talk</span>
+          Call Now
+        </a>
+      </div>
+    </div>
+  </div>
 </main>
+
 <!-- Footer -->
-<footer class="w-full py-12 mt-20 bg-slate-50 dark:bg-slate-950 border-t border-slate-200/50 dark:border-slate-800/50">
-<div class="flex flex-col md:flex-row justify-between items-center px-12 max-w-7xl mx-auto space-y-4 md:space-y-0">
-<span class="font-inter text-xs font-medium uppercase tracking-wider text-slate-600 dark:text-slate-400">© 2024 MediChain Doctor Portal · Emergency QR View. HIPAA Compliant &amp; AES-256 Encrypted.</span>
-<div class="flex gap-8">
-<a class="font-inter text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 underline-offset-4 hover:underline transition-all" href="#">Privacy Policy</a>
-<a class="font-inter text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 underline-offset-4 hover:underline transition-all" href="#">Terms of Service</a>
-<a class="font-inter text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 underline-offset-4 hover:underline transition-all" href="#">Support</a>
-</div>
-</div>
+<footer class="w-full py-10 mt-16 bg-slate-50 border-t border-slate-200/50">
+  <div class="flex flex-col md:flex-row justify-between items-center px-12 max-w-7xl mx-auto gap-4">
+    <span class="text-xs font-medium uppercase tracking-wider text-slate-600">© 2024 MediChain Doctor Portal · Emergency QR View. HIPAA Compliant &amp; AES-256 Encrypted.</span>
+  </div>
 </footer>
+
+<script>
+(function () {
+  const TYPE_ICON = { lab:'biotech', imaging:'radiology', prescription:'medication', surgery:'surgical', other:'description' };
+
+  function setText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val || '—';
+  }
+
+  function parseQRData() {
+    const params = new URLSearchParams(window.location.search);
+    const d = params.get('d');
+    if (!d) return null;
+    try {
+      return JSON.parse(decodeURIComponent(escape(atob(d))));
+    } catch (_) { return null; }
+  }
+
+  /* Demo data for direct browser access (no QR) */
+  const DEMO = {
+    medichain: true, version:'demo',
+    patientId: '#MC-DEMO',
+    name: 'Demo Patient',
+    age: null,
+    bloodType: 'O+',
+    allergies: ['Penicillin (Severe)', 'Latex'],
+    conditions: ['Type 2 Diabetes', 'Hypertension'],
+    emergency: 'Not provided',
+    recordCount: 0,
+    recentRecords: [],
+    generatedAt: new Date().toISOString()
+  };
+
+  function renderData(data) {
+    /* Patient info */
+    setText('patient-name',  data.name || 'Unknown');
+    setText('patient-id',    'ID: ' + (data.patientId || ''));
+    setText('patient-blood', data.bloodType || '—');
+    setText('patient-age',   data.age ? data.age + ' yrs' : '—');
+    document.getElementById('patient-initial').textContent =
+      data.name ? data.name.trim()[0].toUpperCase() : '?';
+
+    /* Scan time */
+    setText('scan-time', new Date().toLocaleTimeString() + ' · Emergency Protocol Active');
+    setText('records-on-file', (data.recordCount || 0) + ' records on this account');
+
+    /* Allergies */
+    const allEl = document.getElementById('allergy-chips');
+    const allergies = data.allergies || [];
+    if (allergies.length) {
+      allEl.innerHTML = allergies.map(a =>
+        `<span class="bg-on-error-container text-white px-4 py-2 rounded-xl font-bold font-label uppercase text-sm tracking-wide">${a}</span>`
+      ).join('');
+    } else {
+      allEl.innerHTML = '<span class="text-on-error-container font-medium italic">No allergies recorded in QR</span>';
+    }
+
+    /* Conditions */
+    const conEl = document.getElementById('conditions-list');
+    const conditions = data.conditions || [];
+    if (conditions.length) {
+      conEl.innerHTML = conditions.map(c => `
+        <li class="flex items-start gap-3 p-4 bg-surface-container-low rounded-2xl">
+          <span class="material-symbols-outlined text-primary-container text-[18px] mt-0.5">check_circle</span>
+          <span class="font-bold text-on-surface">${c}</span>
+        </li>`).join('');
+    } else {
+      conEl.innerHTML = '<li class="text-secondary text-sm italic">No conditions recorded in QR</li>';
+    }
+
+    /* Recent records */
+    const recEl = document.getElementById('recent-records');
+    const records = data.recentRecords || [];
+    if (records.length) {
+      recEl.innerHTML = records.map(r => `
+        <div class="relative pl-8 flex flex-col gap-0.5">
+          <div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-tertiary-fixed flex items-center justify-center">
+            <div class="w-2 h-2 rounded-full bg-tertiary"></div>
+          </div>
+          <p class="text-xs font-bold text-secondary uppercase tracking-widest font-label">${r.type || 'record'}</p>
+          <h5 class="font-bold text-on-surface text-sm">${r.title || r.id || 'Medical Record'}</h5>
+        </div>`).join('');
+    } else {
+      recEl.innerHTML = '<p class="text-secondary text-sm italic">No recent records encoded in QR.</p>';
+    }
+
+    /* Emergency contact */
+    const contact = data.emergency || '—';
+    setText('emergency-contact', contact);
+    const match = contact.match(/[\d\s\-\+\(\)]{7,}/);
+    if (match) {
+      document.getElementById('emergency-call-btn').href = 'tel:' + match[0].replace(/\s/g,'');
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const data = parseQRData();
+    if (!data) {
+      document.getElementById('no-data-banner').classList.remove('hidden');
+      document.getElementById('no-data-banner').classList.add('flex');
+      renderData(DEMO);
+    } else {
+      renderData(data);
+    }
+  });
+})();
+</script>
 </body></html>

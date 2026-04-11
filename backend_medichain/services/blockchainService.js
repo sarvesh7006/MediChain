@@ -1,162 +1,312 @@
 const { ethers } = require('ethers');
+const crypto = require('crypto');
 
-// In a real environment, you'd load the ABI dynamically or build it correctly
-// We'll use the ABI matching our 'StorageProof' contract
 const contractABI = [
-  "function storeRecord(string _recordId, string _cid, string _dataHash) public",
-  "function getRecord(string _recordId) public view returns (string cid, string dataHash, uint256 timestamp, address owner)",
-  "function getAllRecordIds() public view returns (string[] memory)",
-  "function updateProfile(string _profileCid) public",
-  "function grantEmergencyAccess(address patient, string auditId) public",
-  "function submitClaim(string claimId, string recordId, uint256 amount) public",
-  "function approveClaim(string claimId) public",
-  "event RecordStored(string indexed recordId, string cid, address indexed owner, uint256 timestamp)",
-  "event ProfileUpdated(address indexed patient, string profileCid)",
-  "event EmergencyAccessGranted(address indexed patient, address indexed responder, string auditId, uint256 timestamp)",
-  "event ClaimSubmitted(string indexed claimId, string recordId, uint256 amount, address indexed provider)",
-  "event ClaimApproved(string indexed claimId, address indexed insurer)",
-  "event LabReportSigned(string indexed recordId, address indexed provider, uint256 timestamp)",
-  "event EncryptionKeysRotated(address indexed user, uint256 timestamp)"
+  "event AccessGranted(address indexed patient, address indexed doctor, uint256 indexed recordId)",
+  "event AccessRevoked(address indexed patient, address indexed doctor)",
+  "event BatchAccessGranted(address indexed patient, address indexed doctor, uint256[] recordIds)",
+  "event RecordAccessed(uint256 indexed recordId, address indexed accessedBy, uint256 timestamp)",
+  "event RecordCreated(uint256 indexed recordId, address indexed patient, string recordType)",
+  "event RoleGranted(address indexed user, uint8 role, address indexed grantedBy)",
+  "event RoleRevoked(address indexed user, uint8 role, address indexed revokedBy)",
+  "event UserRegistered(address indexed user, uint8 role)",
+  "function ACCESS_DURATION() view returns (uint256)",
+  "function accessGrants(address, address) view returns (address grantedTo, address grantedBy, uint256 timestamp, bool isActive)",
+  "function accessRecord(uint256 recordId) returns (string ipfsHash, string recordType, string title, uint256 timestamp)",
+  "function admin() view returns (address)",
+  "function checkAccess(uint256 recordId, address user) view returns (bool)",
+  "function checkRegistration(address user) view returns (bool)",
+  "function createMedicalRecord(string ipfsHash, string recordType, string title) returns (uint256)",
+  "function getAccessGrant(address patient, address doctor) view returns (tuple(address grantedTo, address grantedBy, uint256 timestamp, bool isActive))",
+  "function getMedicalRecord(uint256 recordId) view returns (tuple(uint256 recordId, address patientAddress, string ipfsHash, string recordType, string title, uint256 timestamp, bool exists))",
+  "function getPatientRecords(address patient) view returns (uint256[])",
+  "function getRecordCount(address patient) view returns (uint256)",
+  "function getRole(address user) view returns (uint8)",
+  "function grantBatchAccess(uint256[] recordIds, address doctor)",
+  "function grantRecordAccess(uint256 recordId, address doctor)",
+  "function grantRole(address user, uint8 role)",
+  "function hasRole(address user, uint8 role) view returns (bool)",
+  "function isRegistered(address) view returns (bool)",
+  "function medicalRecords(uint256) view returns (uint256 recordId, address patientAddress, string ipfsHash, string recordType, string title, uint256 timestamp, bool exists)",
+  "function patientRecords(address, uint256) view returns (uint256)",
+  "function recordAccess(uint256, address) view returns (bool)",
+  "function recordCount() view returns (uint256)",
+  "function registerDoctor(address doctor)",
+  "function registerEmergency(address emergency)",
+  "function registerHospital(address hospital)",
+  "function registerInsurance(address insurance)",
+  "function registerPatient()",
+  "function revokeAccess(address doctor)",
+  "function revokeRole(address user, uint8 role)",
+  "function roles(address) view returns (uint8)"
 ];
 
+// ---------------------------------------------------------------------------
+// In-memory store — used in mock mode (no Ganache / contract needed)
+// ---------------------------------------------------------------------------
+const mockStore = {
+  records: {},       // recordId -> { ipfsHash, recordType, title, timestamp, patientAddress }
+  profiles: {},      // address  -> { profileCid, exists }
+  claims: {},        // claimId  -> { recordId, amount, approved, txHash }
+  emergencyLogs: [], // [{ patientAddress, auditId, timestamp }]
+  access: {},        // patient->doctor -> { grantedTo, grantedBy, timestamp, isActive }
+  patientRecords: {},// patient -> [recordIds]
+  recordCount: 0
+};
+
+function mockTxReceipt(label) {
+  const hash  = '0x' + crypto.randomBytes(32).toString('hex');
+  const block = Math.floor(1_200_000 + Math.random() * 100_000);
+  console.log(`[MOCK TX] ${label} -> hash: ${hash.slice(0, 18)}... block: ${block}`);
+  return { hash, blockNumber: block };
+}
+
+// ---------------------------------------------------------------------------
 class BlockchainService {
   constructor() {
-    this.provider = null;
-    this.wallet = null;
-    this.contract = null;
+    this.provider      = null;
+    this.wallet        = null;
+    this.contract      = null;
+    this.isMockMode    = false;
     this.isInitialized = false;
   }
 
   initialize() {
-    try {
-      const ganacheUrl = process.env.GANACHE_URL || 'http://127.0.0.1:8545';
-      this.provider = new ethers.JsonRpcProvider(ganacheUrl);
-      
-      const privateKey = process.env.PRIVATE_KEY;
-      const contractAddress = process.env.CONTRACT_ADDRESS;
+    const ganacheUrl      = process.env.GANACHE_URL || 'http://127.0.0.1:7545';
+    const privateKey      = process.env.PRIVATE_KEY;
+    const contractAddress = process.env.CONTRACT_ADDRESS;
 
-      if (!privateKey || !contractAddress) {
-        console.warn('BlockchainService warning: PRIVATE_KEY or CONTRACT_ADDRESS not set in .env');
-        return;
-      }
-
-      this.wallet = new ethers.Wallet(privateKey, this.provider);
-      this.contract = new ethers.Contract(contractAddress, contractABI, this.wallet);
+    if (!privateKey || !contractAddress) {
+      this.isMockMode    = true;
       this.isInitialized = true;
-      console.log('Blockchain Service Initialized and connected to Ganache.');
+      console.log('');
+      console.log('=======================================================');
+      console.log('  BlockchainService  --  MOCK MODE (no contract set)  ');
+      console.log('  All blockchain calls use in-memory simulation.       ');
+      console.log('  Set CONTRACT_ADDRESS in .env to use Ganache.         ');
+      console.log('=======================================================');
+      console.log('');
+      return;
+    }
+
+    try {
+      this.provider  = new ethers.JsonRpcProvider(ganacheUrl);
+      this.wallet    = new ethers.Wallet(privateKey, this.provider);
+      this.contract  = new ethers.Contract(contractAddress, contractABI, this.wallet);
+      this.isInitialized = true;
+      console.log('BlockchainService -- connected to Ganache at', ganacheUrl);
       this.listenForEvents();
     } catch (error) {
-      console.error('Failed to initialize BlockchainService:', error);
+      console.error('Failed to initialize BlockchainService:', error.message);
     }
   }
 
   listenForEvents() {
-    if (!this.isInitialized || !this.contract) return;
-    
-    this.contract.on("RecordStored", (recordId, cid, owner, timestamp, event) => {
-      console.log(`[Blockchain Event] New Record Stored: ID: ${recordId} (Owner: ${owner})`);
-    });
-
-    this.contract.on("EmergencyAccessGranted", (patient, responder, auditId, timestamp, event) => {
-      console.log(`[EMERGENCY AUDIT SCAN] ${auditId} | Patient: ${patient} | Responder: ${responder}`);
-    });
-
-    this.contract.on("EncryptionKeysRotated", (user, timestamp, event) => {
-      console.log(`[SECURITY PROTOCOL] User Keys Rotated for ${user}`);
-    });
-
-    this.contract.on("ClaimSubmitted", (claimId, recordId, amount, provider, event) => {
-      console.log(`[INSURANCE NOTIFICATION] Claim ${claimId} submitted for amount ${amount}`);
-    });
+    if (!this.contract) return;
+    this.contract.on('RecordCreated',   (id) => console.log(`[Event] RecordCreated: ${id}`));
+    this.contract.on('AccessGranted',   (p, d, r) => console.log(`[Event] AccessGranted: ${r}`));
+    this.contract.on('AccessRevoked',   (p, d) => console.log(`[Event] AccessRevoked: ${d}`));
   }
 
-  async storeRecord(recordId, cid, hash) {
-    if (!this.isInitialized) throw new Error("Blockchain service not initialized");
+  // createMedicalRecord
+  async createMedicalRecord(ipfsHash, recordType, title) {
+    if (this.isMockMode) {
+      const recordId = ++mockStore.recordCount;
+      const patientAddress = this.wallet ? this.wallet.address : '0xMOCK_OWNER';
+      mockStore.records[recordId] = {
+        recordId,
+        patientAddress,
+        ipfsHash,
+        recordType,
+        title,
+        timestamp: Math.floor(Date.now() / 1000),
+        exists: true,
+      };
+      if (!mockStore.patientRecords[patientAddress]) mockStore.patientRecords[patientAddress] = [];
+      mockStore.patientRecords[patientAddress].push(recordId);
+      const receipt = mockTxReceipt('createMedicalRecord(' + recordId + ')');
+      return { receipt, recordId };
+    }
 
-    let lastError;
-    const MAX_RETRIES = 3;
-
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        // Estimate gas and add a buffer
-        const gasEstimate = await this.contract.storeRecord.estimateGas(recordId, cid, hash);
-        const tx = await this.contract.storeRecord(recordId, cid, hash, {
-          gasLimit: gasEstimate + 50000n // Add safety margin
-        });
-
-        console.log(`Transaction sent (Attempt ${attempt}): ${tx.hash}`);
-        const receipt = await tx.wait(); // Wait for confirmation
-        console.log(`Transaction confirmed in block ${receipt.blockNumber}`);
-        return receipt;
-      } catch (error) {
-        console.error(`Error storing record to blockchain (Attempt ${attempt}/${MAX_RETRIES}):`, error.message);
-        lastError = error;
-        // Wait before retrying (exponential backoff)
-        if (attempt < MAX_RETRIES) {
-            await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
+        try {
+          const isRegistered = await this.checkRegistration(this.wallet.address);
+          if (!isRegistered) {
+            await this.registerPatient();
+          }
+        } catch (err) {
+          // If checkRegistration is missing on contract, continue without gating
+          console.warn('checkRegistration failed, continuing without registration gate:', err.message);
         }
+        const gas = await this.contract.createMedicalRecord.estimateGas(ipfsHash, recordType, title);
+        const tx  = await this.contract.createMedicalRecord(ipfsHash, recordType, title, { gasLimit: gas + 50000n });
+        const receipt = await tx.wait();
+        let recordId = null;
+        for (const log of receipt.logs) {
+          try {
+            const parsed = this.contract.interface.parseLog(log);
+            if (parsed && parsed.name === 'RecordCreated') {
+              recordId = Number(parsed.args[0]);
+              break;
+            }
+          } catch (_) {
+            // ignore non-matching logs
+          }
+        }
+        console.log('TX confirmed in block', receipt.blockNumber, 'recordId', recordId);
+        return { receipt, recordId };
+      } catch (err) {
+        console.error('createMedicalRecord attempt ' + attempt + '/3:', err.message);
+        if (attempt < 3) await new Promise(r => setTimeout(r, 2000 * attempt));
+        else throw err;
       }
     }
-    throw new Error(`Failed to store record after ${MAX_RETRIES} attempts. Last error: ` + lastError.message);
   }
 
-  // ===================================
-  // NEW ARCHITECTURE FUNCTIONS
-  // ===================================
+  async getRecordCount() {
+    if (this.isMockMode) return mockStore.recordCount;
+    const count = await this.contract.recordCount();
+    return Number(count);
+  }
 
-  async updateProfile(profileCid) {
-    if (!this.isInitialized) throw new Error("Blockchain service not initialized");
-    const tx = await this.contract.updateProfile(profileCid);
+  async checkRegistration(address) {
+    if (this.isMockMode) return true;
+    return await this.contract.checkRegistration(address);
+  }
+
+  async registerPatient() {
+    if (this.isMockMode) return mockTxReceipt('registerPatient()');
+    const tx = await this.contract.registerPatient();
     return await tx.wait();
   }
 
-  async grantEmergencyAccess(patientAddress, auditId) {
-    if (!this.isInitialized) throw new Error("Blockchain service not initialized");
-    const tx = await this.contract.grantEmergencyAccess(patientAddress, auditId);
-    return await tx.wait();
-  }
-
-  async submitClaim(claimId, recordId, amount) {
-    if (!this.isInitialized) throw new Error("Blockchain service not initialized");
-    const tx = await this.contract.submitClaim(claimId, recordId, amount);
-    return await tx.wait();
-  }
-
-  async approveClaim(claimId) {
-    if (!this.isInitialized) throw new Error("Blockchain service not initialized");
-    const tx = await this.contract.approveClaim(claimId);
-    return await tx.wait();
-  }
-
-  // ===================================
-  // ORIGINAL FUNCTIONS
-  // ===================================
-
-  async getRecord(recordId) {
-    if (!this.isInitialized) throw new Error("Blockchain service not initialized");
-
+  async getMedicalRecord(recordId) {
+    if (this.isMockMode) return mockStore.records[recordId] || null;
     try {
-      const rec = await this.contract.getRecord(recordId);
+      const rec = await this.contract.getMedicalRecord(recordId);
       return {
-        cid: rec[0],
-        dataHash: rec[1],
-        timestamp: Number(rec[2]),
-        owner: rec[3]
+        recordId: Number(rec[0]),
+        patientAddress: rec[1],
+        ipfsHash: rec[2],
+        recordType: rec[3],
+        title: rec[4],
+        timestamp: Number(rec[5]),
+        exists: rec[6]
       };
     } catch (error) {
-      if (error.reason && error.reason.includes("Record does not exist")) {
-        return null; // Return null if not found
-      }
+      if (error.reason && error.reason.includes('Record does not exist')) return null;
       throw error;
     }
   }
 
-  async getAllRecordIds() {
-    if (!this.isInitialized) throw new Error("Blockchain service not initialized");
-    return await this.contract.getAllRecordIds();
+  async getPatientRecords(patientAddress) {
+    if (this.isMockMode) return mockStore.patientRecords[patientAddress] || [];
+    const ids = await this.contract.getPatientRecords(patientAddress);
+    return ids.map(id => Number(id));
+  }
+
+  async checkAccess(recordId, user) {
+    if (this.isMockMode) {
+      const key = (mockStore.records[recordId]?.patientAddress || '0x') + ':' + user;
+      return !!mockStore.access[key]?.isActive;
+    }
+    return await this.contract.checkAccess(recordId, user);
+  }
+
+  async grantRecordAccess(recordId, doctor) {
+    if (this.isMockMode) {
+      const patient = this.wallet ? this.wallet.address : '0xMOCK_OWNER';
+      const key = patient + ':' + doctor;
+      mockStore.access[key] = { grantedTo: doctor, grantedBy: patient, timestamp: Date.now(), isActive: true };
+      return mockTxReceipt('grantRecordAccess(' + recordId + ')');
+    }
+    const tx = await this.contract.grantRecordAccess(recordId, doctor);
+    return await tx.wait();
+  }
+
+  async grantBatchAccess(recordIds, doctor) {
+    if (this.isMockMode) {
+      const patient = this.wallet ? this.wallet.address : '0xMOCK_OWNER';
+      const key = patient + ':' + doctor;
+      mockStore.access[key] = { grantedTo: doctor, grantedBy: patient, timestamp: Date.now(), isActive: true };
+      return mockTxReceipt('grantBatchAccess(' + recordIds.length + ')');
+    }
+    const tx = await this.contract.grantBatchAccess(recordIds, doctor);
+    return await tx.wait();
+  }
+
+  async revokeAccess(doctor) {
+    if (this.isMockMode) {
+      const patient = this.wallet ? this.wallet.address : '0xMOCK_OWNER';
+      const key = patient + ':' + doctor;
+      if (mockStore.access[key]) mockStore.access[key].isActive = false;
+      return mockTxReceipt('revokeAccess(' + doctor + ')');
+    }
+    const tx = await this.contract.revokeAccess(doctor);
+    return await tx.wait();
+  }
+
+  async accessRecord(recordId) {
+    if (this.isMockMode) {
+      const rec = mockStore.records[recordId];
+      return rec ? { ipfsHash: rec.ipfsHash, recordType: rec.recordType, title: rec.title, timestamp: rec.timestamp } : null;
+    }
+    const rec = await this.contract.accessRecord(recordId);
+    return { ipfsHash: rec[0], recordType: rec[1], title: rec[2], timestamp: Number(rec[3]) };
+  }
+
+  // updateProfile
+  async updateProfile(profileCid, address) {
+    if (this.isMockMode) {
+      const addr = address || '0xMOCK_PATIENT_' + Date.now();
+      mockStore.profiles[addr] = { profileCid, exists: true };
+      return mockTxReceipt('updateProfile(' + addr + ')');
+    }
+    const tx = await this.contract.updateProfile(profileCid);
+    return await tx.wait();
+  }
+
+  // getMockProfile -- helper used by userController in mock mode
+  getMockProfile(address) {
+    return mockStore.profiles[address] || null;
+  }
+
+  // grantEmergencyAccess
+  async grantEmergencyAccess(patientAddress, auditId) {
+    if (this.isMockMode) {
+      mockStore.emergencyLogs.push({ patientAddress, auditId, timestamp: Date.now() });
+      console.log('[MOCK EMERGENCY] Access logged:', auditId, 'for', patientAddress);
+      return mockTxReceipt('grantEmergencyAccess(' + auditId + ')');
+    }
+    const tx = await this.contract.grantEmergencyAccess(patientAddress, auditId);
+    return await tx.wait();
+  }
+
+  // submitClaim
+  async submitClaim(claimId, recordId, amount) {
+    if (this.isMockMode) {
+      if (mockStore.claims[claimId]) throw new Error('Claim already exists');
+      const receipt = mockTxReceipt('submitClaim(' + claimId + ')');
+      mockStore.claims[claimId] = { recordId, amount, approved: false, txHash: receipt.hash };
+      return receipt;
+    }
+    const tx = await this.contract.submitClaim(claimId, recordId, amount);
+    return await tx.wait();
+  }
+
+  // approveClaim
+  async approveClaim(claimId) {
+    if (this.isMockMode) {
+      if (!mockStore.claims[claimId]) throw new Error('Claim does not exist');
+      const receipt = mockTxReceipt('approveClaim(' + claimId + ')');
+      mockStore.claims[claimId].approved = true;
+      return receipt;
+    }
+    const tx = await this.contract.approveClaim(claimId);
+    return await tx.wait();
   }
 }
 
-// Export as a singleton
 const blockchainService = new BlockchainService();
 module.exports = blockchainService;

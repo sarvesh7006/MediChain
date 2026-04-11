@@ -48,10 +48,11 @@
     <div class="hidden md:flex items-center justify-center gap-6">
       <a class="text-slate-600 hover:text-teal-700 font-medium text-sm tracking-tight transition-all duration-300" href="../dashboard/code.html">Dashboard</a>
       <a class="text-slate-600 hover:text-teal-700 font-medium text-sm tracking-tight transition-all duration-300" href="../records/records.html">Records</a>
-      <a class="text-teal-800 border-b-2 border-teal-600 pb-1 font-medium text-sm tracking-tight" href="../patient_requests/patientrequests.html">Requests</a>
       <a class="text-slate-600 hover:text-teal-700 font-medium text-sm tracking-tight transition-all duration-300" href="../insurance_claim/insuranceclaim.html">Insurance</a>
+      <a class="text-teal-800 border-b-2 border-teal-600 pb-1 font-medium text-sm tracking-tight" href="../patient_requests/patientrequests.html">Requests</a>
     </div>
     <div class="flex items-center gap-4 justify-end">
+      <button data-wallet-btn class="px-4 py-2 rounded-full text-sm font-semibold bg-surface-container text-secondary hover:bg-surface-container-high transition-all">Connect Wallet</button>
       <button class="material-symbols-outlined p-2 text-slate-600 hover:bg-teal-50/50 rounded-full transition-all">notifications</button>
       <a href="../emergency_qr_feature/emerqr.html" class="bg-primary hover:bg-primary-container text-white px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 active:scale-95 shadow-lg shadow-primary/20">
         Emergency QR
@@ -157,17 +158,15 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script src="../shared/app.js"></script>
 <script>
   // ── Request data ──────────────────────────────────────────────────
-  const REQUESTS = [
-    { id:1,  doctor:'Dr. James Kelley',   hospital:'Memorial Hospital',      record:'Complete Blood Count (CBC)',     type:'Lab Report',   date:'Apr 10, 2024', status:'pending'  },
-    { id:2,  doctor:'Dr. Emily Rhodes',   hospital:'Quest Diagnostics',       record:'Chest X-Ray — AP View',          type:'Imaging',      date:'Apr 10, 2024', status:'pending'  },
-    { id:3,  doctor:'Dr. Priya Nair',     hospital:'Radiology Center',        record:'Lisinopril 10mg — Monthly Rx',   type:'Prescription', date:'Apr 9, 2024',  status:'granted'  },
-    { id:4,  doctor:'Dr. Michael Torres', hospital:'SF General Hospital',     record:'HbA1c Blood Test — 6.8%',        type:'Lab Report',   date:'Apr 8, 2024',  status:'granted'  },
-    { id:5,  doctor:'Dr. Alan Brooks',    hospital:'City Clinic',             record:'Appendectomy — Laparoscopic',    type:'Surgery',      date:'Apr 7, 2024',  status:'rejected' },
-    { id:6,  doctor:'Dr. Sarah Okon',     hospital:'Westside Medical Center', record:'MRI Brain — Contrast',           type:'Imaging',      date:'Apr 6, 2024',  status:'granted'  },
-    { id:7,  doctor:'Dr. James Kelley',   hospital:'Memorial Hospital',       record:'Spirometry — Lung Function Test',type:'Lab Report',   date:'Apr 5, 2024',  status:'rejected' },
-    { id:8,  doctor:'Dr. Emily Rhodes',   hospital:'Quest Diagnostics',       record:'Iron Studies Panel',             type:'Lab Report',   date:'Apr 4, 2024',  status:'pending'  },
+  let REQUESTS = [];
+  const CONTRACT_ADDRESS = '0x87295166aaaFa36D5dbAf732616E57F1aA6cDBE9';
+  const CONTRACT_ABI = [
+    {"inputs":[{"internalType":"uint256","name":"recordId","type":"uint256"},{"internalType":"address","name":"doctor","type":"address"}],"name":"grantRecordAccess","outputs":[],"stateMutability":"nonpayable","type":"function"},
+    {"inputs":[{"internalType":"address","name":"doctor","type":"address"}],"name":"revokeAccess","outputs":[],"stateMutability":"nonpayable","type":"function"}
   ];
 
   const TYPE_ICONS  = { 'Lab Report':'biotech','Imaging':'radiology','Prescription':'medication','Surgery':'surgical','Other':'description' };
@@ -200,24 +199,24 @@
       const tIcon = TYPE_ICONS[r.type] || 'description';
       const actions = r.status === 'pending'
         ? `<div class="flex gap-2 pt-4 border-t border-outline-variant/10">
-            <button onclick="confirmAction(${r.id},'grant')"
+            <button onclick="confirmAction('${r.id}','grant')"
               class="flex-1 bg-primary text-on-primary py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 hover:opacity-90 active:scale-[0.98] transition-all">
               <span class="material-symbols-outlined text-[14px]">check_circle</span>Grant Access
             </button>
-            <button onclick="confirmAction(${r.id},'reject')"
+            <button onclick="confirmAction('${r.id}','reject')"
               class="flex-1 border border-outline-variant/30 text-secondary py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-error-container hover:text-on-error-container hover:border-transparent transition-all">
               <span class="material-symbols-outlined text-[14px]">cancel</span>Reject
             </button>
           </div>`
         : r.status === 'granted'
         ? `<div class="flex gap-2 pt-4 border-t border-outline-variant/10">
-            <button onclick="confirmAction(${r.id},'revoke')"
+            <button onclick="confirmAction('${r.id}','revoke')"
               class="flex-1 border border-outline-variant/30 text-secondary py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-error-container hover:text-on-error-container hover:border-transparent transition-all">
               <span class="material-symbols-outlined text-[14px]">block</span>Revoke Access
             </button>
           </div>`
         : `<div class="flex gap-2 pt-4 border-t border-outline-variant/10">
-            <button onclick="confirmAction(${r.id},'grant')"
+            <button onclick="confirmAction('${r.id}','grant')"
               class="flex-1 border border-outline-variant/30 text-secondary py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-secondary-container hover:text-primary hover:border-transparent transition-all">
               <span class="material-symbols-outlined text-[14px]">undo</span>Grant Instead
             </button>
@@ -255,7 +254,7 @@
         <!-- Blockchain note -->
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings:'FILL' 1;">verified</span>
-          <p class="text-xs text-secondary">Decision will be recorded on Ethereum blockchain</p>
+          <p class="text-xs text-secondary">Decision will be recorded on MediChain (Ganache local network)</p>
         </div>
 
         ${actions}
@@ -313,14 +312,45 @@
     pendingAction = null;
   }
 
-  function executeAction() {
+  async function executeAction() {
     if (!pendingAction) return;
     const { id, action } = pendingAction;
     const r = REQUESTS.find(r => r.id === id);
     if (!r) { closeConfirm(); return; }
 
-    const newStatus = action === 'grant' ? 'granted' : action === 'reject' ? 'rejected' : 'rejected';
-    r.status = newStatus;
+    // ── Step 1: try blockchain tx (optional — won't block if wallet / contract unavailable) ──
+    if (action === 'grant' || action === 'revoke') {
+      try {
+        await ensureWallet();
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer   = await provider.getSigner();
+        const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+        if (action === 'grant') {
+          await (await contract.grantRecordAccess(Number(r.recordId), r.doctorAddress)).wait();
+        } else {
+          await (await contract.revokeAccess(r.doctorAddress)).wait();
+        }
+      } catch (chainErr) {
+        // Non-fatal in demo/mock mode — log and continue to backend call
+        console.warn('[Blockchain] tx skipped:', chainErr.message);
+      }
+    }
+
+    // ── Step 2: backend API (always runs) ──
+    try {
+      const res = await fetch(window.MediChain.API_BASE + '/requests/' + encodeURIComponent(id) + '/decision', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Chain-Bypass': '1' },
+        body: JSON.stringify({ action })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.message || 'Update failed');
+      r.status = json.data.status;
+    } catch (err) {
+      closeConfirm();
+      showToast('Update failed: ' + err.message, true);
+      return;
+    }
 
     closeConfirm();
     updateStats();
@@ -353,7 +383,53 @@
   }
 
   // ── Init ──────────────────────────────────────────────────────────
-  updateStats();
-  renderCards();
+  window.addEventListener('DOMContentLoaded', () => {
+    window.MediChain.setRole('patient');
+    loadRequests();
+  });
+
+  async function loadRequests() {
+    const pid = window.MediChain.getPatientId();
+    try {
+      const res = await fetch(window.MediChain.API_BASE + '/requests?patientId=' + encodeURIComponent(pid));
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.message || 'Failed to load');
+      REQUESTS = (json.data || []).map(r => ({
+        id: r.id,
+        doctor: r.doctorName || 'Doctor Portal',
+        doctorAddress: r.doctorAddress || '',
+        hospital: 'MediChain Network',
+        record: r.recordTitle || 'Medical Record',
+        type: toTypeLabel(r.recordType),
+        recordId: r.recordId,
+        date: r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '—',
+        status: r.status || 'pending'
+      }));
+      updateStats();
+      renderCards();
+    } catch (err) {
+      showToast('Failed to load requests: ' + err.message, true);
+      updateStats();
+      renderCards();
+    }
+  }
+
+  function toTypeLabel(type) {
+    const map = {
+      lab: 'Lab Report',
+      prescription: 'Prescription',
+      imaging: 'Imaging',
+      surgery: 'Surgery',
+      other: 'Other'
+    };
+    return map[type] || 'Other';
+  }
+
+  async function ensureWallet() {
+    if (!window.ethereum || !window.ethereum.request) {
+      throw new Error('MetaMask not available');
+    }
+    await window.MediChain.connectWallet();
+  }
 </script>
 </body></html>

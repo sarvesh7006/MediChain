@@ -5,7 +5,9 @@ const { uploadData } = require('../controllers/uploadController');
 const { getAllRecords, verifyRecord } = require('../controllers/verifyController');
 const { updateProfile, getProfile } = require('../controllers/userController');
 const { grantEmergencyAccess } = require('../controllers/emergencyController');
-const { submitClaim, approveClaim } = require('../controllers/insuranceController');
+const { submitClaim, listClaims, decideClaimStatus } = require('../controllers/insuranceController');
+const { createRequest, listRequests, decideRequest } = require('../controllers/requestController');
+const { getAuditLogs } = require('../controllers/auditController');
 
 const router = express.Router();
 
@@ -37,6 +39,19 @@ router.post('/emergency-access', grantEmergencyAccess);
 // 4. SECURE INSURANCE FLOW
 // ==============================
 router.post('/insurance/submit', submitClaim);
-router.post('/insurance/approve', approveClaim);
+router.get('/insurance/claims', listClaims);
+router.post('/insurance/claims/:claimId/decision', decideClaimStatus);
+
+// ==============================
+// 5. ACCESS REQUEST FLOW
+// ==============================
+router.post('/requests', createRequest);
+router.get('/requests', listRequests);
+router.post('/requests/:id/decision', decideRequest);
+
+// ==============================
+// 6. AUDIT LOG FLOW
+// ==============================
+router.get('/audit', getAuditLogs);
 
 module.exports = router;

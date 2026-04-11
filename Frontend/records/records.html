@@ -98,6 +98,7 @@
 <a class="text-slate-600 hover:text-teal-700 font-medium text-sm tracking-tight transition-all duration-300" href="../patient_requests/patientrequests.html">Requests</a>
 </div>
 <div class="flex items-center gap-4 justify-end">
+<button data-wallet-btn class="px-4 py-2 rounded-full text-sm font-semibold bg-surface-container text-secondary hover:bg-surface-container-high transition-all">Connect Wallet</button>
 <button class="material-symbols-outlined p-2 text-slate-600 hover:bg-teal-50/50 rounded-full transition-all">notifications</button>
 <a href="../emergency_qr_feature/emerqr.html" class="bg-primary hover:bg-primary-container text-white px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 active:scale-95 shadow-lg shadow-primary/20">Emergency QR</a>
 <img alt="User profile photo" class="w-10 h-10 rounded-full border-2 border-primary-container/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN2zqKtz9fW1SDKERxhj86PSWNUJY7yLuwyUsSq9dj-nK9-OSuLi45G2Boict4XFBCA0nAtNlmoKWf8zZaOoDe5PS4MgOK4YFrbwmxkYyTux27hsN38YVkoqpiG3O9El3wveI8nAT5jxQkSG_gi-xIPufPJXKDlBZ2Gpf3AM7gXAOhXkJy1QHoxTHQjFwFTHbsPhcdj66-KJii73o4Oahhfdz03544Z5rIENnTHxIPXeUP3oMhUTWqek7b-dF8eopjqu_pNWszSAs"/>
@@ -132,128 +133,12 @@
     </div>
     <div class="ml-auto flex items-center gap-2 text-sm text-secondary font-medium">
       <span class="material-symbols-outlined text-base text-primary">verified</span>
-      <span id="record-count">42 records</span> · Blockchain Verified
+      <span id="record-count">0 records</span> · Blockchain Verified
     </div>
   </div>
 
   <!-- Records Grid -->
-  <div id="records-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-
-    <!-- Record Card: Lab -->
-    <div class="record-card bg-surface-container-lowest rounded-[1.5rem] p-6 border border-outline-variant/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)]" data-type="lab">
-      <div class="flex items-start justify-between mb-4">
-        <div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center">
-          <span class="material-symbols-outlined text-primary">biotech</span>
-        </div>
-        <span class="text-[10px] font-bold uppercase tracking-widest bg-secondary-container text-primary px-3 py-1 rounded-full">Lab Report</span>
-      </div>
-      <h3 class="font-headline font-bold text-on-surface text-lg mb-1">Complete Blood Count (CBC)</h3>
-      <p class="text-sm text-secondary mb-4">Quest Diagnostics · Dr. Emily Rhodes</p>
-      <div class="flex items-center justify-between">
-        <span class="text-xs text-outline font-label">Dec 14, 2023</span>
-        <div class="flex items-center gap-2">
-          <span class="flex items-center gap-1 text-xs text-teal-600 font-semibold"><span class="material-symbols-outlined text-sm">lock</span> Encrypted</span>
-          <button class="text-primary hover:underline text-xs font-bold ml-2">View →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Record Card: Prescription -->
-    <div class="record-card bg-surface-container-lowest rounded-[1.5rem] p-6 border border-outline-variant/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)]" data-type="prescription">
-      <div class="flex items-start justify-between mb-4">
-        <div class="w-12 h-12 rounded-2xl bg-tertiary-fixed flex items-center justify-center">
-          <span class="material-symbols-outlined text-tertiary">medication</span>
-        </div>
-        <span class="text-[10px] font-bold uppercase tracking-widest bg-tertiary-fixed text-tertiary px-3 py-1 rounded-full">Prescription</span>
-      </div>
-      <h3 class="font-headline font-bold text-on-surface text-lg mb-1">Lisinopril 10mg – Monthly</h3>
-      <p class="text-sm text-secondary mb-4">SF General Hospital · Dr. Michael Torres</p>
-      <div class="flex items-center justify-between">
-        <span class="text-xs text-outline font-label">Nov 28, 2023</span>
-        <div class="flex items-center gap-2">
-          <span class="flex items-center gap-1 text-xs text-teal-600 font-semibold"><span class="material-symbols-outlined text-sm">lock</span> Encrypted</span>
-          <button class="text-primary hover:underline text-xs font-bold ml-2">View →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Record Card: Imaging -->
-    <div class="record-card bg-surface-container-lowest rounded-[1.5rem] p-6 border border-outline-variant/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)]" data-type="imaging">
-      <div class="flex items-start justify-between mb-4">
-        <div class="w-12 h-12 rounded-2xl bg-error-container flex items-center justify-center">
-          <span class="material-symbols-outlined text-on-error-container">radiology</span>
-        </div>
-        <span class="text-[10px] font-bold uppercase tracking-widest bg-error-container text-on-error-container px-3 py-1 rounded-full">Imaging</span>
-      </div>
-      <h3 class="font-headline font-bold text-on-surface text-lg mb-1">Chest X-Ray – AP View</h3>
-      <p class="text-sm text-secondary mb-4">Radiology Center · Dr. Priya Nair</p>
-      <div class="flex items-center justify-between">
-        <span class="text-xs text-outline font-label">Oct 5, 2023</span>
-        <div class="flex items-center gap-2">
-          <span class="flex items-center gap-1 text-xs text-teal-600 font-semibold"><span class="material-symbols-outlined text-sm">lock</span> Encrypted</span>
-          <button class="text-primary hover:underline text-xs font-bold ml-2">View →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Record Card: Surgery -->
-    <div class="record-card bg-surface-container-lowest rounded-[1.5rem] p-6 border border-outline-variant/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)]" data-type="surgery">
-      <div class="flex items-start justify-between mb-4">
-        <div class="w-12 h-12 rounded-2xl bg-surface-container-high flex items-center justify-center">
-          <span class="material-symbols-outlined text-secondary">surgical</span>
-        </div>
-        <span class="text-[10px] font-bold uppercase tracking-widest bg-surface-container-high text-secondary px-3 py-1 rounded-full">Surgery</span>
-      </div>
-      <h3 class="font-headline font-bold text-on-surface text-lg mb-1">Appendectomy – Laparoscopic</h3>
-      <p class="text-sm text-secondary mb-4">Memorial Hospital · Dr. James Kelley</p>
-      <div class="flex items-center justify-between">
-        <span class="text-xs text-outline font-label">Aug 12, 2022</span>
-        <div class="flex items-center gap-2">
-          <span class="flex items-center gap-1 text-xs text-teal-600 font-semibold"><span class="material-symbols-outlined text-sm">lock</span> Encrypted</span>
-          <button class="text-primary hover:underline text-xs font-bold ml-2">View →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Record Card: Lab -->
-    <div class="record-card bg-surface-container-lowest rounded-[1.5rem] p-6 border border-outline-variant/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)]" data-type="lab">
-      <div class="flex items-start justify-between mb-4">
-        <div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center">
-          <span class="material-symbols-outlined text-primary">monitor_heart</span>
-        </div>
-        <span class="text-[10px] font-bold uppercase tracking-widest bg-secondary-container text-primary px-3 py-1 rounded-full">Lab Report</span>
-      </div>
-      <h3 class="font-headline font-bold text-on-surface text-lg mb-1">HbA1c Blood Test – 6.8%</h3>
-      <p class="text-sm text-secondary mb-4">Quest Diagnostics · Dr. Emily Rhodes</p>
-      <div class="flex items-center justify-between">
-        <span class="text-xs text-outline font-label">Nov 3, 2023</span>
-        <div class="flex items-center gap-2">
-          <span class="flex items-center gap-1 text-xs text-teal-600 font-semibold"><span class="material-symbols-outlined text-sm">lock</span> Encrypted</span>
-          <button class="text-primary hover:underline text-xs font-bold ml-2">View →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Record Card: Prescription -->
-    <div class="record-card bg-surface-container-lowest rounded-[1.5rem] p-6 border border-outline-variant/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)]" data-type="prescription">
-      <div class="flex items-start justify-between mb-4">
-        <div class="w-12 h-12 rounded-2xl bg-tertiary-fixed flex items-center justify-center">
-          <span class="material-symbols-outlined text-tertiary">vaccines</span>
-        </div>
-        <span class="text-[10px] font-bold uppercase tracking-widest bg-tertiary-fixed text-tertiary px-3 py-1 rounded-full">Prescription</span>
-      </div>
-      <h3 class="font-headline font-bold text-on-surface text-lg mb-1">Metformin 500mg – Daily</h3>
-      <p class="text-sm text-secondary mb-4">City Clinic · Dr. Alan Brooks</p>
-      <div class="flex items-center justify-between">
-        <span class="text-xs text-outline font-label">Sep 19, 2023</span>
-        <div class="flex items-center gap-2">
-          <span class="flex items-center gap-1 text-xs text-teal-600 font-semibold"><span class="material-symbols-outlined text-sm">lock</span> Encrypted</span>
-          <button class="text-primary hover:underline text-xs font-bold ml-2">View →</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
+  <div id="records-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></div>
 </main>
 
 <!-- Upload Modal -->
@@ -349,7 +234,7 @@
       </div>
       <div class="flex items-center gap-2 bg-teal-50 p-3 rounded-xl border border-teal-100">
         <span class="material-symbols-outlined text-primary text-sm">verified</span>
-        <span class="text-xs text-primary font-semibold">Verified on Ethereum · Block #1,204,882</span>
+        <span class="text-xs text-primary font-semibold">Verified on MediChain · Ganache Local Network</span>
       </div>
       <div class="flex gap-3 pt-2">
         <button id="view-download-btn" onclick="downloadRecord()" class="flex-1 bg-primary text-on-primary py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all">
@@ -378,6 +263,7 @@
   </div>
 </footer>
 
+<script src="../shared/app.js"></script>
 <script>
   // ── Record data store ───────────────────────────────────────────
   const RECORD_TYPES = {
@@ -388,14 +274,7 @@
     other:        { label: 'Record',       bg: 'bg-surface-container',   text: 'text-secondary',  icon: 'description' },
   };
 
-  const records = [
-    { id:1, title:'Complete Blood Count (CBC)',    type:'lab',          doctor:'Quest Diagnostics · Dr. Emily Rhodes',  date:'Dec 14, 2023', file:'CBC_report.pdf',        hash:'0x3a4f8d12e...b9c' },
-    { id:2, title:'Lisinopril 10mg – Monthly',     type:'prescription', doctor:'SF General Hospital · Dr. Michael Torres',date:'Nov 28, 2023',file:'lisinopril_rx.pdf',     hash:'0x7c1b2a99f...e41' },
-    { id:3, title:'Chest X-Ray – AP View',         type:'imaging',      doctor:'Radiology Center · Dr. Priya Nair',     date:'Oct 5, 2023',  file:'chest_xray.dcm',        hash:'0xab12cc03d...f78' },
-    { id:4, title:'Appendectomy – Laparoscopic',   type:'surgery',      doctor:'Memorial Hospital · Dr. James Kelley',  date:'Aug 12, 2022', file:'appendectomy_report.pdf',hash:'0x55ef9a21b...301' },
-    { id:5, title:'HbA1c Blood Test – 6.8%',       type:'lab',          doctor:'Quest Diagnostics · Dr. Emily Rhodes',  date:'Nov 3, 2023',  file:'hba1c_lab.pdf',          hash:'0x92dc4b77c...a19' },
-    { id:6, title:'Metformin 500mg – Daily',        type:'prescription', doctor:'City Clinic · Dr. Alan Brooks',         date:'Sep 19, 2023', file:'metformin_rx.pdf',       hash:'0xf03e11d8a...b56' },
-  ];
+  let records = [];
 
   let selectedFile = null;
   let currentRecord = null;
@@ -430,7 +309,12 @@
     document.getElementById('drop-label').innerHTML = 'Drag &amp; drop or <span class="text-primary font-bold">browse files</span>';
   }
 
-  function uploadRecord() {
+  async function uploadRecord() {
+    const address = window.MediChain.getWallet();
+    if (!address) {
+      showToast('Connect MetaMask to upload records.', true);
+      return;
+    }
     const title  = document.getElementById('u-title').value.trim();
     const type   = document.getElementById('u-type').value;
     const doctor = document.getElementById('u-doctor').value.trim();
@@ -441,23 +325,30 @@
     // Simulate blockchain upload with a progress toast
     showToast('Encrypting & uploading to blockchain…');
 
-    setTimeout(() => {
-      const now  = new Date();
-      const date = now.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
-      const hash = '0x' + Array.from({length:8}, () => Math.floor(Math.random()*0xffff).toString(16).padStart(4,'0')).join('') + '...';
-      const id   = Date.now();
-      const rec  = {
-        id, title, type, doctor,
-        date,
-        file: selectedFile ? selectedFile.name : 'uploaded_record.pdf',
-        hash
-      };
-      records.push(rec);
-      addCardToGrid(rec);
-      updateCount();
+    try {
+      const fd = new FormData();
+      if (selectedFile) fd.append('document', selectedFile);
+      fd.append('title', title);
+      fd.append('type', type);
+      fd.append('doctor', doctor);
+      fd.append('patientId', window.MediChain.getPatientId());
+      fd.append('patientAddress', address);
+      fd.append('uploadedBy', 'patient');
+
+      const res = await fetch(window.MediChain.API_BASE + '/upload', {
+        method: 'POST',
+        body: fd
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || 'Upload failed');
+      }
+      await loadRecords();
       closeUpload();
       showToast('Record uploaded & verified on blockchain!');
-    }, 1800);
+    } catch (err) {
+      showToast('Upload failed: ' + err.message, true);
+    }
   }
 
   function addCardToGrid(rec) {
@@ -478,7 +369,7 @@
         <span class="text-xs text-outline font-label">${rec.date}</span>
         <div class="flex items-center gap-2">
           <span class="flex items-center gap-1 text-xs text-teal-600 font-semibold"><span class="material-symbols-outlined text-sm">lock</span> Encrypted</span>
-          <button onclick="viewRecord(${rec.id})" class="text-primary hover:underline text-xs font-bold ml-2">View →</button>
+          <button onclick="viewRecord('${rec.id}')" class="text-primary hover:underline text-xs font-bold ml-2">View →</button>
         </div>
       </div>`;
     document.getElementById('records-grid').prepend(card);
@@ -500,7 +391,7 @@
     document.getElementById('view-doctor').textContent     = rec.doctor;
     document.getElementById('view-date').textContent       = rec.date;
     document.getElementById('view-file-name').textContent  = rec.file;
-    document.getElementById('view-hash').textContent       = rec.hash;
+    document.getElementById('view-hash').textContent       = rec.fullHash || rec.hash;
     document.getElementById('view-modal').classList.remove('hidden');
   }
 
@@ -521,17 +412,9 @@
     showToast('Record downloaded!');
   }
 
-  // ── Wire existing "View →" buttons ───────────────────────────────
-  // Attach IDs from records array to existing static cards on load
   window.addEventListener('DOMContentLoaded', () => {
-    const staticBtns = document.querySelectorAll('#records-grid .record-card');
-    staticBtns.forEach((card, i) => {
-      const btn = card.querySelector('button');
-      if (btn && records[i]) {
-        btn.setAttribute('onclick', `viewRecord(${records[i].id})`);
-      }
-    });
-    updateCount();
+    window.MediChain.setRole('patient');
+    loadRecords();
     // Auto-open upload modal if navigated with #upload
     if (window.location.hash === '#upload') {
       document.getElementById('upload-modal').classList.remove('hidden');
@@ -578,6 +461,35 @@
     t.textContent = msg;
     document.body.appendChild(t);
     setTimeout(() => t.remove(), 3000);
+  }
+
+  // ── API Load ─────────────────────────────────────────────────────
+  async function loadRecords() {
+    const grid = document.getElementById('records-grid');
+    grid.innerHTML = '';
+    const pid = window.MediChain.getPatientId();
+    try {
+      const address = window.MediChain.getWallet();
+      const res = await fetch(window.MediChain.API_BASE + '/records?patientAddress=' + encodeURIComponent(address || ''));
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.message || 'Failed to load records');
+      records = (json.data || []).map(r => ({
+        id: r.recordId || r.id,
+        title: r.title || 'Untitled Record',
+        type: r.type || 'other',
+        doctor: r.doctor || 'Unknown Provider',
+        date: r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '—',
+        file: r.fileName || 'record.json',
+        hash: r.dataHash ? ('0x' + r.dataHash.slice(0, 12) + '...' + r.dataHash.slice(-6)) : '—',
+        fullHash: r.dataHash || '',
+        fileUrl: r.fileUrl || null
+      }));
+      records.forEach(addCardToGrid);
+      updateCount();
+    } catch (err) {
+      showToast('Failed to load records: ' + err.message, true);
+      updateCount();
+    }
   }
 </script>
 </body></html>

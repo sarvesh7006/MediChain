@@ -74,6 +74,7 @@
       <a class="font-semibold tracking-tight text-slate-500 hover:text-teal-600 transition-colors text-sm" href="../doctor_dashboard/requests.html">Requests</a>
     </div>
     <div class="flex items-center gap-3 justify-end">
+      <button data-wallet-btn class="px-4 py-2 rounded-full text-sm font-semibold bg-surface-container text-secondary hover:bg-surface-container-high transition-all">Connect Wallet</button>
       <button onclick="openScanner()" class="bg-primary text-on-primary px-4 py-2 rounded-xl font-headline font-bold text-sm flex items-center gap-2 hover:opacity-85 transition-all">
         <span class="material-symbols-outlined text-[18px]">qr_code_scanner</span>
         Scan QR
@@ -132,13 +133,8 @@
           </button>
         </div>
 
-        <!-- Quick select demo IDs -->
-        <div class="mt-4 flex flex-wrap gap-2">
-          <span class="text-xs text-outline font-medium mr-1 self-center">Quick select:</span>
-          <button onclick="fillId('#PX-88219-BK')" class="text-xs bg-surface-container px-3 py-1.5 rounded-full text-secondary hover:bg-secondary-container hover:text-primary transition-all font-medium">#PX-88219-BK</button>
-          <button onclick="fillId('#PX-44302-CM')" class="text-xs bg-surface-container px-3 py-1.5 rounded-full text-secondary hover:bg-secondary-container hover:text-primary transition-all font-medium">#PX-44302-CM</button>
-          <button onclick="fillId('#PX-77541-RJ')" class="text-xs bg-surface-container px-3 py-1.5 rounded-full text-secondary hover:bg-secondary-container hover:text-primary transition-all font-medium">#PX-77541-RJ</button>
-        </div>
+        <!-- Patient ID hint -->
+        <p class="mt-3 text-xs text-secondary">Enter the Patient ID shared by the patient (e.g. <span class="font-mono font-semibold">#MC-xxxxxxxx</span>)</p>
       </div>
 
       <!-- Result area -->
@@ -321,44 +317,26 @@
         </div>
       </div>
 
-      <!-- Recent access log -->
+      <!-- Recent Access Log (live) -->
       <div class="bg-surface-container-lowest rounded-[2rem] p-7 shadow-[0_20px_40px_rgba(0,95,108,0.06)] border border-outline-variant/10">
-        <h3 class="font-headline font-bold text-on-surface mb-5">Recent Access Log</h3>
-        <div class="space-y-3">
-          <div class="flex items-center gap-4 p-3 rounded-2xl hover:bg-surface-container-low transition-all cursor-pointer">
-            <div class="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0">
-              <span class="material-symbols-outlined text-primary text-sm">person</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-semibold text-on-surface truncate">Jonathan R. Sterling</p>
-              <p class="text-xs text-secondary">#PX-88219-BK · 2h ago</p>
-            </div>
-            <span class="text-xs bg-secondary-container text-primary px-2 py-1 rounded-full font-bold">Approved</span>
-          </div>
-          <div class="flex items-center gap-4 p-3 rounded-2xl hover:bg-surface-container-low transition-all cursor-pointer">
-            <div class="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0">
-              <span class="material-symbols-outlined text-primary text-sm">person</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-semibold text-on-surface truncate">Maria Chen</p>
-              <p class="text-xs text-secondary">#PX-44302-CM · Yesterday</p>
-            </div>
-            <span class="text-xs bg-secondary-container text-primary px-2 py-1 rounded-full font-bold">Approved</span>
-          </div>
-          <div class="flex items-center gap-4 p-3 rounded-2xl hover:bg-surface-container-low transition-all cursor-pointer">
-            <div class="w-9 h-9 rounded-full bg-error-container flex items-center justify-center flex-shrink-0">
-              <span class="material-symbols-outlined text-on-error-container text-sm">emergency</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-semibold text-on-surface truncate">Raj Patel</p>
-              <p class="text-xs text-secondary">#PX-77541-RJ · 3 days ago</p>
-            </div>
-            <span class="text-xs bg-error-container text-on-error-container px-2 py-1 rounded-full font-bold">Emergency</span>
-          </div>
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="font-headline font-bold text-on-surface">Recent Access Log</h3>
+          <button onclick="loadAccessLog()" class="text-outline hover:text-primary transition-colors" title="Refresh">
+            <span class="material-symbols-outlined text-[18px]">refresh</span>
+          </button>
+        </div>
+        <div id="access-log-loading" class="flex items-center gap-3 text-secondary text-sm py-2">
+          <div class="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+          Loading…
+        </div>
+        <div id="access-log-list" class="space-y-2 hidden"></div>
+        <div id="access-log-empty" class="hidden text-center py-8">
+          <span class="material-symbols-outlined text-outline text-3xl block mb-2">history</span>
+          <p class="text-sm text-secondary">No access events yet. Requests you send will appear here.</p>
         </div>
       </div>
 
-      <!-- Verification status -->
+      <!-- Portal Status (live) -->
       <div class="bg-surface-container-lowest rounded-[2rem] p-7 shadow-[0_20px_40px_rgba(0,95,108,0.06)] border border-outline-variant/10">
         <div class="flex items-center gap-3 mb-4">
           <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">verified_user</span>
@@ -366,20 +344,22 @@
         </div>
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <span class="text-sm text-secondary">Blockchain Connection</span>
-            <span class="flex items-center gap-1.5 text-xs font-bold text-primary"><span class="w-2 h-2 rounded-full bg-primary block"></span>Active</span>
+            <span class="text-sm text-secondary">Backend API</span>
+            <span id="status-api" class="flex items-center gap-1.5 text-xs font-bold text-secondary">
+              <span class="w-2 h-2 rounded-full bg-surface-container-high block"></span>Checking…
+            </span>
           </div>
           <div class="flex items-center justify-between">
-            <span class="text-sm text-secondary">Doctor Credential</span>
-            <span class="text-xs font-bold text-primary">Verified ✓</span>
+            <span class="text-sm text-secondary">Doctor Wallet</span>
+            <span id="status-wallet" class="text-xs font-bold text-secondary">Not connected</span>
           </div>
           <div class="flex items-center justify-between">
             <span class="text-sm text-secondary">Access Protocol</span>
-            <span class="text-xs font-bold text-secondary">Standard Mode</span>
+            <span class="text-xs font-bold text-secondary">X-Chain-Bypass Mode</span>
           </div>
           <div class="flex items-center justify-between">
-            <span class="text-sm text-secondary">Session Audit Log</span>
-            <span class="text-xs font-bold text-tertiary">#DR-20940</span>
+            <span class="text-sm text-secondary">Requests Sent</span>
+            <span id="status-req-count" class="text-xs font-bold text-tertiary">—</span>
           </div>
         </div>
       </div>
@@ -462,74 +442,47 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script src="../shared/app.js"></script>
 <script>
-  // ── Patient database (dummy) ──────────────────────────────────────
-  const PATIENTS = {
-    '#PX-88219-BK': {
-      name: 'Jonathan R. Sterling', dob: '1959-03-14', age: 64, gender: 'Male',
-      blood: 'O+', photo: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDyzyJT4DCF7-QpALYNGwQDNVOBQOcwV6ibfj3ZDalIDe3Cth8shMe-0Upu3W0n8ZHaaDygsL5w0qsfp0mnpxIzK-dBigoK97mxgsqGfWjHkyRAsl8nE2Ow5xAC4Or-Za8WQzwtrWO3c7uX-E7uhSv4JUp_0OPfsQWHTGpgt6g1cw1tg-vH3VIM7Y2A4_i6JQ0zWFbaKv36VE6CwBitJwknVSE60cb6vaTWnqoOnA5VWCOoHIS2wz-LZV1WmdiCm0NOZLnR9dlGOM',
-      allergies: ['Penicillin (Severe)', 'Latex', 'Ciprofloxacin'],
-      conditions: ['Type 2 Diabetes — Diagnosed Oct 2018', 'Hypertension (Stage 1) — Medication: Lisinopril', 'Chronic Bronchitis — Seasonal complications'],
-      records: [
-        { id:'r1', title:'Complete Blood Count (CBC)',      type:'Lab Report',   date:'Dec 14, 2023', icon:'biotech',     badge:'bg-secondary-container text-primary' },
-        { id:'r2', title:'Lisinopril 10mg — Monthly Rx',   type:'Prescription', date:'Nov 28, 2023', icon:'medication',  badge:'bg-tertiary-fixed text-tertiary' },
-        { id:'r3', title:'Chest X-Ray — AP View',          type:'Imaging',      date:'Oct 5, 2023',  icon:'radiology',   badge:'bg-error-container text-on-error-container' },
-        { id:'r4', title:'HbA1c Blood Test — 6.8%',        type:'Lab Report',   date:'Nov 3, 2023',  icon:'biotech',     badge:'bg-secondary-container text-primary' },
-        { id:'r5', title:'Appendectomy — Laparoscopic',    type:'Surgery',      date:'Aug 12, 2022', icon:'surgical',    badge:'bg-surface-container-high text-secondary' },
-      ]
-    },
-    '#PX-44302-CM': {
-      name: 'Maria Chen', dob: '1978-07-22', age: 45, gender: 'Female',
-      blood: 'A−', photo: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBFNL-rRmOsshLyMXV8MTRZDn2ix6m8uOAh_I9Uozg5koVKGqQEbXTCat7GERu_56n-qRnnJ9KQt61YwW_ZMezqw4ZeiwJT6ZAANMINVwQLtWvBOT6Bvln5XpGclIRLi7alFyrKF5_8qkYZ8N8Lew88mPQA5vPTxUiXcymkVUB4Jpwbqtl8KupmgeWsDM1LaGXdZK8jt-VTT8fSDzS95QXQGTGuc2D9ByDF86W1wJ4GKhzKQE1sksL6Ou-RXui2P3HULOjx1KDmxHE',
-      allergies: ['Aspirin (Moderate)', 'Sulfonamides'],
-      conditions: ['Rheumatoid Arthritis — Diagnosed Jan 2015', 'Hypothyroidism — Medication: Levothyroxine'],
-      records: [
-        { id:'r1', title:'Rheumatoid Factor Panel',         type:'Lab Report',   date:'Jan 10, 2024', icon:'biotech',   badge:'bg-secondary-container text-primary' },
-        { id:'r2', title:'Levothyroxine 50mcg — Daily',     type:'Prescription', date:'Dec 5, 2023',  icon:'medication',badge:'bg-tertiary-fixed text-tertiary' },
-        { id:'r3', title:'Hand X-Ray — Bilateral',          type:'Imaging',      date:'Nov 20, 2023', icon:'radiology', badge:'bg-error-container text-on-error-container' },
-      ]
-    },
-    '#PX-77541-RJ': {
-      name: 'Raj Patel', dob: '1990-11-05', age: 33, gender: 'Male',
-      blood: 'B+', photo: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBN2zqKtz9fW1SDKERxhj86PSWNUJY7yLuwyUsSq9dj-nK9-OSuLi45G2Boict4XFBCA0nAtNlmoKWf8zZaOoDe5PS4MgOK4YFrbwmxkYyTux27hsN38YVkoqpiG3O9El3wveI8nAT5jxQkSG_gi-xIPufPJXKDlBZ2Gpf3AM7gXAOhXkJy1QHoxTHQjFwFTHbsPhcdj66-KJii73o4Oahhfdz03544Z5rIENnTHxIPXeUP3oMhUTWqek7b-dF8eopjqu_pNWszSAs',
-      allergies: ['Ibuprofen (Mild)'],
-      conditions: ['Asthma — Inhaler as needed', 'Mild Anemia — Monitor iron levels'],
-      records: [
-        { id:'r1', title:'Spirometry — Lung Function Test', type:'Lab Report',   date:'Feb 2, 2024',  icon:'biotech',   badge:'bg-secondary-container text-primary' },
-        { id:'r2', title:'Salbutamol Inhaler — PRN',        type:'Prescription', date:'Jan 15, 2024', icon:'medication',badge:'bg-tertiary-fixed text-tertiary' },
-        { id:'r3', title:'Iron Studies Panel',              type:'Lab Report',   date:'Dec 19, 2023', icon:'biotech',   badge:'bg-secondary-container text-primary' },
-      ]
-    }
-  };
-
-  let currentPatient = null;
   let currentPatientId = null;
+  let currentRecords = [];
   let docSelectedFile = null;
+  const CONTRACT_ADDRESS = '0x87295166aaaFa36D5dbAf732616E57F1aA6cDBE9';
+  const CONTRACT_ABI = [
+    {"inputs":[{"internalType":"uint256","name":"recordId","type":"uint256"},{"internalType":"address","name":"user","type":"address"}],"name":"checkAccess","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
+    {"inputs":[{"internalType":"uint256","name":"recordId","type":"uint256"}],"name":"accessRecord","outputs":[{"internalType":"string","name":"ipfsHash","type":"string"},{"internalType":"string","name":"recordType","type":"string"},{"internalType":"string","name":"title","type":"string"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"stateMutability":"nonpayable","type":"function"}
+  ];
 
   function fillId(id) {
     document.getElementById('patient-id-input').value = id;
     document.getElementById('patient-id-input').focus();
   }
 
-  function requestAccess() {
+  async function requestAccess() {
     const raw = document.getElementById('patient-id-input').value.trim();
     const id = raw.toUpperCase().startsWith('#') ? raw.toUpperCase() : ('#' + raw).toUpperCase();
 
     showResult();
     setStatus('pending', 'Searching patient records on blockchain…', 'bg-surface-container-high text-on-surface');
 
-    setTimeout(() => {
-      const patient = PATIENTS[id];
-      if (patient) {
-        currentPatient = patient;
-        currentPatientId = id;
-        setStatus('verified', 'Patient found — records loaded from MediChain', 'bg-secondary-container text-primary');
-        populateCard(patient, id);
-      } else {
-        setStatus('error', 'Patient ID not found. Verify the ID and try again.', 'bg-error-container text-on-error-container');
+    try {
+      const res = await fetch(window.MediChain.API_BASE + '/records?patientId=' + encodeURIComponent(id));
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.message || 'Patient lookup failed');
+      if (!json.data || json.data.length === 0) {
+        setStatus('error', 'No records found for this patient ID.', 'bg-error-container text-on-error-container');
         clearCard();
+        return;
       }
-    }, 1600);
+      currentPatientId = id;
+      currentRecords = json.data.map(mapRecord);
+      setStatus('verified', 'Patient found — records loaded from MediChain', 'bg-secondary-container text-primary');
+      populateCard(id, currentRecords);
+    } catch (err) {
+      setStatus('error', 'Patient ID not found. Verify the ID and try again.', 'bg-error-container text-on-error-container');
+      clearCard();
+    }
   }
 
   function showResult() {
@@ -545,32 +498,28 @@
     document.getElementById('status-text').textContent = text;
   }
 
-  function populateCard(p, id) {
-    document.getElementById('patient-name').textContent   = p.name;
+  function populateCard(id, records) {
+    document.getElementById('patient-name').textContent   = 'Patient ' + id;
     document.getElementById('patient-pid').textContent    = id;
-    document.getElementById('patient-blood').textContent  = p.blood;
-    document.getElementById('patient-age').textContent    = p.age;
-    document.getElementById('patient-gender').textContent = p.gender;
-    document.getElementById('patient-dob').textContent    = p.dob;
-    if (p.photo) document.getElementById('patient-photo').src = p.photo;
+    document.getElementById('patient-blood').textContent  = '—';
+    document.getElementById('patient-age').textContent    = '—';
+    document.getElementById('patient-gender').textContent = '—';
+    document.getElementById('patient-dob').textContent    = '—';
+    document.getElementById('patient-photo').src = 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDyzyJT4DCF7-QpALYNGwQDNVOBQOcwV6ibfj3ZDalIDe3Cth8shMe-0Upu3W0n8ZHaaDygsL5w0qsfp0mnpxIzK-dBigoK97mxgsqGfWjHkyRAsl8nE2Ow5xAC4Or-Za8WQzwtrWO3c7uX-E7uhSv4JUp_0OPfsQWHTGpgt6g1cw1tg-vH3VIM7Y2A4_i6JQ0zWFbaKv36VE6CwBitJwknVSE60cb6vaTWnqoOnA5VWCOoHIS2wz-LZV1WmdiCm0NOZLnR9dlGOM';
     // Auto-fill the upload card's patient ID field
     document.getElementById('doc-patient-id').value = id;
 
-    // Allergies
-    document.getElementById('patient-allergies').innerHTML = p.allergies.map(a =>
-      `<span class="bg-on-error-container text-white px-3 py-1.5 rounded-xl font-bold text-xs uppercase tracking-wide">${a}</span>`
-    ).join('');
+    // Allergies / Conditions (not provided in demo)
+    document.getElementById('patient-allergies').innerHTML =
+      `<span class="bg-on-error-container text-white px-3 py-1.5 rounded-xl font-bold text-xs uppercase tracking-wide">Not Provided</span>`;
 
-    // Conditions
-    document.getElementById('patient-conditions').innerHTML = p.conditions.map(c =>
+    document.getElementById('patient-conditions').innerHTML =
       `<div class="flex items-start gap-3 p-3 bg-surface-container-low rounded-xl">
-        <span class="material-symbols-outlined text-primary text-[16px] mt-0.5">check_circle</span>
-        <span class="text-sm text-on-surface">${c}</span>
-      </div>`
-    ).join('');
+        <span class="material-symbols-outlined text-primary text-[16px] mt-0.5">info</span>
+        <span class="text-sm text-on-surface">No conditions shared yet.</span>
+      </div>`;
 
-    // Medical records list
-    renderRecordsList(p.records);
+    renderRecordsList(records);
 
     document.getElementById('patient-card').classList.remove('hidden');
   }
@@ -578,17 +527,18 @@
   function renderRecordsList(records) {
     const list = document.getElementById('patient-records-list');
     list.innerHTML = records.map(r => `
-      <label class="flex items-center gap-3 p-3 rounded-2xl border border-outline-variant/15 bg-surface-container-low hover:bg-secondary-container/20 cursor-pointer transition-all group">
+      <div class="flex items-center gap-3 p-3 rounded-2xl border border-outline-variant/15 bg-surface-container-low hover:bg-secondary-container/20 transition-all group">
         <input type="checkbox" value="${r.id}" class="record-checkbox w-4 h-4 rounded accent-primary cursor-pointer"/>
-        <span class="w-8 h-8 rounded-xl ${r.badge.split(' ')[0]} flex items-center justify-center flex-shrink-0">
-          <span class="material-symbols-outlined text-[16px] ${r.badge.split(' ')[1]}">${r.icon}</span>
+        <span class="w-8 h-8 rounded-xl ${r.badgeBg} flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-[16px] ${r.badgeText}">${r.icon}</span>
         </span>
         <div class="flex-1 min-w-0">
           <p class="text-sm font-semibold text-on-surface truncate">${r.title}</p>
           <p class="text-xs text-secondary">${r.type} · ${r.date}</p>
         </div>
-        <span class="text-xs ${r.badge} px-2 py-0.5 rounded-full font-bold hidden group-hover:block">${r.type}</span>
-      </label>`
+        <span class="text-xs ${r.badgeBg} ${r.badgeText} px-2 py-0.5 rounded-full font-bold hidden group-hover:block">${r.type}</span>
+        <button onclick="viewGrantedRecord('${r.id}')" class="text-xs font-bold text-primary hover:underline ml-2">View</button>
+      </div>`
     ).join('');
   }
 
@@ -599,24 +549,74 @@
     document.getElementById('select-all-btn').textContent = allSelected ? 'Deselect All' : 'Select All';
   }
 
-  function requestRecordAccess() {
+  async function requestRecordAccess() {
     const checked = [...document.querySelectorAll('.record-checkbox:checked')];
     if (!checked.length) { showToast('Select at least one record to request access.', true); return; }
 
+    const doctorAddress = window.MediChain.getWallet();
+    const doctorName = doctorAddress ? ('Dr. ' + window.MediChain.shortAddr(doctorAddress)) : 'Doctor Portal';
+
     showToast('Sending request to patient…');
-    setTimeout(() => {
-      // Visually mark checked rows as "Pending"
+    try {
+      for (const cb of checked) {
+        const rec = currentRecords.find(r => r.id === cb.value);
+        if (!rec) continue;
+        const res = await fetch(window.MediChain.API_BASE + '/requests', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            patientId: currentPatientId,
+            doctorName,
+            doctorAddress,
+            recordId: rec.id,
+            recordTitle: rec.title,
+            recordType: rec.rawType
+          })
+        });
+        const json = await res.json();
+        if (!res.ok || !json.success) throw new Error(json.message || 'Request failed');
+      }
       checked.forEach(cb => {
-        const label = cb.closest('label');
-        label.classList.add('opacity-60');
+        const row = cb.closest('div[class*="flex items-center"]');
+        if (!row) return;
+        row.classList.add('opacity-60');
+        // remove old pending badge if any
+        row.querySelectorAll('.pending-badge').forEach(b => b.remove());
         const badge = document.createElement('span');
-        badge.className = 'text-xs bg-surface-container text-secondary px-2 py-0.5 rounded-full font-bold ml-auto';
+        badge.className = 'pending-badge text-xs bg-surface-container text-secondary px-2 py-0.5 rounded-full font-bold ml-auto flex-shrink-0';
         badge.textContent = 'Pending…';
-        label.appendChild(badge);
+        row.appendChild(badge);
         cb.disabled = true;
       });
       showToast(`Access request sent for ${checked.length} record(s). Awaiting patient approval.`);
-    }, 1400);
+    } catch (err) {
+      showToast('Request failed: ' + err.message, true);
+    }
+  }
+
+  async function viewGrantedRecord(recordId) {
+    try {
+      await ensureWallet();
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const address = await signer.getAddress();
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+
+      const allowed = await contract.checkAccess(Number(recordId), address);
+      if (!allowed) {
+        showToast('Access not granted yet for this record.', true);
+        return;
+      }
+      const rec = await contract.accessRecord(Number(recordId));
+      const ipfsHash = rec[0];
+      const recordType = rec[1];
+      const title = rec[2];
+      const timestamp = rec[3];
+      showToast(`Access granted: ${title} (${recordType}) · IPFS ${ipfsHash}`);
+      console.log('Record Accessed', { recordId, ipfsHash, recordType, title, timestamp: Number(timestamp) });
+    } catch (err) {
+      showToast('Access check failed: ' + err.message, true);
+    }
   }
 
   function clearCard() {
@@ -645,30 +645,40 @@
     document.getElementById('doc-drop-label').innerHTML = 'Drag &amp; drop or <span class="text-primary font-bold">browse</span>';
   }
 
-  function uploadDoctorReport() {
-    if (!currentPatient) { showToast('Search for a patient first.', true); return; }
+  async function uploadDoctorReport() {
+    if (!currentPatientId) { showToast('Search for a patient first.', true); return; }
     const type = document.getElementById('doc-type').value;
     if (!type) { showToast('Please select a report type.', true); return; }
     if (!docSelectedFile) { showToast('Please select a file to upload.', true); return; }
 
     showToast('Encrypting report for blockchain upload…');
-    setTimeout(() => {
-      // Add the new report to the list
-      const newRecord = {
-        id: 'r-new-' + Date.now(),
-        title: docSelectedFile.name.replace(/\.[^.]+$/, ''),
-        type: document.getElementById('doc-type').options[document.getElementById('doc-type').selectedIndex].text,
-        date: new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
-        icon: 'upload_file',
-        badge: 'bg-secondary-container text-primary'
-      };
-      currentPatient.records.unshift(newRecord);
-      renderRecordsList(currentPatient.records);
+    try {
+      const doctorAddress = window.MediChain.getWallet();
+      const doctorName = doctorAddress ? ('Dr. ' + window.MediChain.shortAddr(doctorAddress)) : 'Doctor Portal';
+      const fd = new FormData();
+      fd.append('document', docSelectedFile);
+      fd.append('title', docSelectedFile.name.replace(/\.[^.]+$/, ''));
+      fd.append('type', type);
+      fd.append('doctor', doctorName);
+      fd.append('patientId', currentPatientId);
+      fd.append('patientAddress', '');
+      fd.append('uploadedBy', 'doctor');
+
+      const res = await fetch(window.MediChain.API_BASE + '/upload', {
+        method: 'POST',
+        body: fd
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.message || 'Upload failed');
+
+      await requestAccess();
       clearDocFile();
       document.getElementById('doc-type').value = '';
       document.getElementById('doc-notes').value = '';
       showToast('Report uploaded and linked to patient record on blockchain!');
-    }, 1800);
+    } catch (err) {
+      showToast('Upload failed: ' + err.message, true);
+    }
   }
 
   // ── QR Scanner (real camera via jsQR) ────────────────────────────
@@ -767,9 +777,7 @@
     document.getElementById('scan-status').textContent = 'QR detected! Processing…';
     // Check if the QR data looks like a patient ID
     const normalized = data.trim().toUpperCase();
-    const isPatientId = Object.keys(PATIENTS).some(
-      k => k === normalized || k === '#' + normalized
-    ) || /^#?PX-\d+-[A-Z]+$/i.test(normalized);
+    const isPatientId = normalized.startsWith('#');
 
     setTimeout(() => {
       closeScanner();
@@ -787,8 +795,14 @@
   }
 
   function simulateScan() {
-    // Demo: pretend we scanned the first demo patient
-    onQRDetected('#PX-88219-BK');
+    // Use the current wallet's patient ID if available, else prompt
+    const pid = window.MediChain ? window.MediChain.getPatientId() : null;
+    if (pid) {
+      onQRDetected(pid);
+    } else {
+      closeScanner();
+      showToast('Enter a Patient ID in the search field above.', true);
+    }
   }
 
   // ── Toast ─────────────────────────────────────────────────────────
@@ -800,5 +814,125 @@
     document.body.appendChild(t);
     setTimeout(() => t.remove(), 3500);
   }
+
+  function mapRecord(r) {
+    const typeCfg = {
+      lab:          { label:'Lab Report',   icon:'biotech',   badgeBg:'bg-secondary-container', badgeText:'text-primary' },
+      prescription: { label:'Prescription', icon:'medication',badgeBg:'bg-tertiary-fixed',      badgeText:'text-tertiary' },
+      imaging:      { label:'Imaging',      icon:'radiology', badgeBg:'bg-error-container',     badgeText:'text-on-error-container' },
+      surgery:      { label:'Surgery',      icon:'surgical',  badgeBg:'bg-surface-container-high', badgeText:'text-secondary' },
+      other:        { label:'Record',       icon:'description', badgeBg:'bg-surface-container', badgeText:'text-secondary' },
+    };
+    const cfg = typeCfg[r.type] || typeCfg.other;
+    return {
+      id: r.recordId || r.id,
+      title: r.title || 'Untitled Record',
+      type: cfg.label,
+      rawType: r.type || 'other',
+      date: r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '—',
+      icon: cfg.icon,
+      badgeBg: cfg.badgeBg,
+      badgeText: cfg.badgeText
+    };
+  }
+
+  async function ensureWallet() {
+    if (!window.ethereum || !window.ethereum.request) {
+      throw new Error('MetaMask not available');
+    }
+    await window.MediChain.connectWallet();
+  }
+
+  // ── Live Right Panel ──────────────────────────────────────────────
+  async function loadAccessLog() {
+    const loadEl  = document.getElementById('access-log-loading');
+    const listEl  = document.getElementById('access-log-list');
+    const emptyEl = document.getElementById('access-log-empty');
+    loadEl.classList.remove('hidden');
+    listEl.classList.add('hidden');
+    emptyEl.classList.add('hidden');
+
+    try {
+      const res  = await fetch(window.MediChain.API_BASE + '/audit?limit=20');
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error();
+
+      // Keep only access-related events
+      const events = (json.data || []).filter(e =>
+        ['ACCESS_REQUEST','ACCESS_DECISION','EMERGENCY_ACCESS'].includes(e.action)
+      ).slice(0, 8);
+
+      loadEl.classList.add('hidden');
+      if (!events.length) { emptyEl.classList.remove('hidden'); return; }
+
+      const ACTION_CFG = {
+        ACCESS_REQUEST:  { icon:'person_add',  label:'Access Requested', bg:'bg-surface-container',   text:'text-secondary' },
+        ACCESS_DECISION: { icon:'verified',    label:'Decision',         bg:'bg-secondary-container', text:'text-primary'   },
+        EMERGENCY_ACCESS:{ icon:'emergency',   label:'Emergency',        bg:'bg-error-container',     text:'text-on-error-container' },
+      };
+
+      listEl.innerHTML = events.map(e => {
+        const cfg  = ACTION_CFG[e.action] || ACTION_CFG.ACCESS_REQUEST;
+        const pid  = e.patientId || (e.patientAddress ? e.patientAddress.slice(0,10)+'…' : 'Unknown');
+        const ago  = timeAgo(e.timestamp);
+        const dec  = e.details && e.details.decision ? ' · ' + e.details.decision : '';
+        return `
+          <div class="flex items-center gap-3 p-3 rounded-2xl hover:bg-surface-container-low transition-all">
+            <div class="w-9 h-9 rounded-full ${cfg.bg} flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined ${cfg.text} text-sm" style="font-variation-settings:'FILL' 1">${cfg.icon}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-on-surface truncate">${e.details && e.details.doctorName ? e.details.doctorName : e.actor}</p>
+              <p class="text-xs text-secondary">${pid}${dec} · ${ago}</p>
+            </div>
+            <span class="text-[10px] ${cfg.bg} ${cfg.text} px-2 py-0.5 rounded-full font-bold flex-shrink-0">${cfg.label}</span>
+          </div>`;
+      }).join('');
+      listEl.classList.remove('hidden');
+    } catch (_) {
+      loadEl.classList.add('hidden');
+      emptyEl.classList.remove('hidden');
+    }
+  }
+
+  async function checkPortalStatus() {
+    // API health
+    const apiEl    = document.getElementById('status-api');
+    const walletEl = document.getElementById('status-wallet');
+    const reqEl    = document.getElementById('status-req-count');
+    try {
+      const r = await fetch('http://localhost:5001/health');
+      if (r.ok) {
+        apiEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-primary block"></span><span class="text-primary">Online</span>';
+      } else throw new Error();
+    } catch (_) {
+      apiEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-error block"></span><span class="text-error">Offline</span>';
+    }
+    // Wallet
+    const wallet = window.MediChain ? window.MediChain.getWallet() : null;
+    walletEl.textContent = wallet ? wallet.slice(0,6)+'…'+wallet.slice(-4) : 'Not connected';
+    walletEl.className   = 'text-xs font-bold ' + (wallet ? 'text-primary' : 'text-secondary');
+    // Requests sent
+    try {
+      const r2   = await fetch(window.MediChain.API_BASE + '/audit?limit=100');
+      const j2   = await r2.json();
+      const reqs = (j2.data||[]).filter(e => e.action === 'ACCESS_REQUEST').length;
+      reqEl.textContent = reqs + ' request' + (reqs !== 1 ? 's' : '');
+    } catch (_) { reqEl.textContent = '—'; }
+  }
+
+  function timeAgo(iso) {
+    const diff = Math.floor((Date.now() - new Date(iso)) / 1000);
+    if (diff < 60)  return diff + 's ago';
+    if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+    return Math.floor(diff/86400) + 'd ago';
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    window.MediChain.setRole('doctor');
+    loadAccessLog();
+    checkPortalStatus();
+  });
 </script>
 </body></html>

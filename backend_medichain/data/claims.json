@@ -1,0 +1,53 @@
+[
+  {
+    "claimId": "CLM-a7180320-d407-4b9d-adad-51bc107019c0",
+    "patientId": "#MC-387D962D",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "recordId": "REC-dd5fbf24-bd8e-410c-8002-26e5f1d64628",
+    "recordTitle": "x ray",
+    "treatment": "pneumonia",
+    "provider": "city hospital",
+    "totalExpense": 10000,
+    "coveragePct": 80,
+    "copayAmount": 2000,
+    "insurerName": "start insurance",
+    "notes": "",
+    "status": "approved",
+    "submittedAt": "2026-04-11T02:02:37.079Z",
+    "updatedAt": "2026-04-11T02:14:25.603Z"
+  },
+  {
+    "claimId": "CLM-40cc3c01-cadd-4124-8520-b337fee72e0b",
+    "patientId": "#MC-387D962D",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "recordId": "REC-150b7521-7a44-4fb0-bcf0-5ce356e5a314",
+    "recordTitle": "MRI",
+    "treatment": "mri",
+    "provider": "general",
+    "totalExpense": 7000,
+    "coveragePct": 80,
+    "copayAmount": 1400,
+    "insurerName": "star",
+    "notes": "",
+    "status": "approved",
+    "submittedAt": "2026-04-11T02:08:51.297Z",
+    "updatedAt": "2026-04-11T02:16:01.216Z"
+  },
+  {
+    "claimId": "CLM-38dd1bb8-41d6-492b-acec-f82958eb89d8",
+    "patientId": "#MC-387D962D",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "recordId": "REC-150b7521-7a44-4fb0-bcf0-5ce356e5a314",
+    "recordTitle": "MRI",
+    "treatment": "Brain Surgery",
+    "provider": "City Hospital",
+    "totalExpense": 50000,
+    "coveragePct": 65,
+    "copayAmount": 17500,
+    "insurerName": "star",
+    "notes": "",
+    "status": "approved",
+    "submittedAt": "2026-04-11T02:19:04.415Z",
+    "updatedAt": "2026-04-11T02:19:09.631Z"
+  }
+]

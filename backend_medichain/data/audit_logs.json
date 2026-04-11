@@ -1,0 +1,157 @@
+[
+  {
+    "id": "AUDIT-d5dc675f-e2e6-4cc1-943b-370cec6cf2f4",
+    "action": "ACCESS_DECISION",
+    "actor": "#MC-387D962D",
+    "actorType": "patient",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "patientId": "#MC-387D962D",
+    "details": {
+      "requestId": "REQ-06b2864a-8d26-4a35-b729-e567c88a71c2",
+      "doctorName": "Dr. 0x387d...962d",
+      "recordId": "REC-150b7521-7a44-4fb0-bcf0-5ce356e5a314",
+      "recordTitle": "MRI",
+      "decision": "revoke",
+      "status": "rejected"
+    },
+    "timestamp": "2026-04-11T01:48:55.597Z"
+  },
+  {
+    "id": "AUDIT-a79dc233-5196-42bd-a2c3-1034bc974d8e",
+    "action": "ACCESS_DECISION",
+    "actor": "#MC-387D962D",
+    "actorType": "patient",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "patientId": "#MC-387D962D",
+    "details": {
+      "requestId": "REQ-9e1f6c50-dc7b-4472-b1b2-48c993858d03",
+      "doctorName": "Dr. 0x387d...962d",
+      "recordId": "REC-d8b8aa9c-bb69-455b-857c-85e8a5af26ae",
+      "recordTitle": "blood report",
+      "decision": "reject",
+      "status": "rejected"
+    },
+    "timestamp": "2026-04-11T01:49:05.386Z"
+  },
+  {
+    "id": "AUDIT-494573fc-b676-4497-a3bf-4210b9ef5efd",
+    "action": "INSURANCE_CLAIM",
+    "actor": "#MC-387D962D",
+    "actorType": "patient",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "patientId": "#MC-387D962D",
+    "details": {
+      "claimId": "CLM-a7180320-d407-4b9d-adad-51bc107019c0",
+      "recordId": "REC-dd5fbf24-bd8e-410c-8002-26e5f1d64628",
+      "recordTitle": "x ray",
+      "treatment": "pneumonia",
+      "totalExpense": 10000,
+      "copayAmount": "2000.00",
+      "status": "submitted"
+    },
+    "timestamp": "2026-04-11T02:02:37.081Z"
+  },
+  {
+    "id": "AUDIT-1dfb7798-38c8-4e01-8917-2b5128daeca4",
+    "action": "INSURANCE_CLAIM",
+    "actor": "#MC-387D962D",
+    "actorType": "patient",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "patientId": "#MC-387D962D",
+    "details": {
+      "claimId": "CLM-40cc3c01-cadd-4124-8520-b337fee72e0b",
+      "recordId": "REC-150b7521-7a44-4fb0-bcf0-5ce356e5a314",
+      "recordTitle": "MRI",
+      "treatment": "mri",
+      "totalExpense": 7000,
+      "copayAmount": "1400.00",
+      "status": "submitted"
+    },
+    "timestamp": "2026-04-11T02:08:51.299Z"
+  },
+  {
+    "id": "AUDIT-4d5b6ed6-614f-48aa-bc65-a640ebe5c3aa",
+    "action": "UPLOAD_RECORD",
+    "actor": "patient",
+    "actorType": "patient",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "patientId": "#MC-387D962D",
+    "details": {
+      "recordId": "REC-42c9507f-5e39-4e8e-9055-631e0f13a428",
+      "title": "mri",
+      "type": "imaging",
+      "doctor": "Dr. Siddhi",
+      "cid": "Qme95cbd8aec351fa6376b239d5a44f96af885e504c7ff"
+    },
+    "timestamp": "2026-04-11T02:12:59.279Z"
+  },
+  {
+    "id": "AUDIT-d9852f3b-a0b3-4470-ad2b-b94210bccc4f",
+    "action": "INSURANCE_CLAIM",
+    "actor": "#MC-387D962D",
+    "actorType": "patient",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "patientId": "#MC-387D962D",
+    "details": {
+      "claimId": "CLM-38dd1bb8-41d6-492b-acec-f82958eb89d8",
+      "recordId": "REC-150b7521-7a44-4fb0-bcf0-5ce356e5a314",
+      "recordTitle": "MRI",
+      "treatment": "Brain Surgery",
+      "totalExpense": 50000,
+      "copayAmount": "17500.00",
+      "status": "submitted"
+    },
+    "timestamp": "2026-04-11T02:19:04.422Z"
+  },
+  {
+    "id": "AUDIT-035fe974-8966-4c0b-be54-5e76cc734162",
+    "action": "ACCESS_DECISION",
+    "actor": "#MC-387D962D",
+    "actorType": "patient",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "patientId": "#MC-387D962D",
+    "details": {
+      "requestId": "REQ-f70f0fb5-594b-42dc-aedb-755f3b9392ce",
+      "doctorName": "Dr. 0x387d...962d",
+      "recordId": "REC-dd5fbf24-bd8e-410c-8002-26e5f1d64628",
+      "recordTitle": "x ray",
+      "decision": "grant",
+      "status": "granted"
+    },
+    "timestamp": "2026-04-11T02:19:30.962Z"
+  },
+  {
+    "id": "AUDIT-449956aa-2079-4d03-afc3-ce1a9dbbea3b",
+    "action": "ACCESS_DECISION",
+    "actor": "#MC-387D962D",
+    "actorType": "patient",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "patientId": "#MC-387D962D",
+    "details": {
+      "requestId": "REQ-f70f0fb5-594b-42dc-aedb-755f3b9392ce",
+      "doctorName": "Dr. 0x387d...962d",
+      "recordId": "REC-dd5fbf24-bd8e-410c-8002-26e5f1d64628",
+      "recordTitle": "x ray",
+      "decision": "revoke",
+      "status": "rejected"
+    },
+    "timestamp": "2026-04-11T02:19:41.174Z"
+  },
+  {
+    "id": "AUDIT-63529d93-60ea-46dc-9c6c-6e0de7421103",
+    "action": "ACCESS_REQUEST",
+    "actor": "Dr. 0x387d...962d",
+    "actorType": "doctor",
+    "patientAddress": null,
+    "patientId": "#PX-44302-CM",
+    "details": {
+      "requestId": "REQ-04a7b417-289a-4d5d-a23b-ae477e7474a2",
+      "doctorName": "Dr. 0x387d...962d",
+      "recordId": "REC-dd5fbf24-bd8e-410c-8002-26e5f1d64628",
+      "recordTitle": "x ray",
+      "recordType": "imaging",
+      "status": "pending"
+    },
+    "timestamp": "2026-04-11T02:22:00.428Z"
+  }
+]

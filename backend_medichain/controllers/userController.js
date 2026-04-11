@@ -1,18 +1,19 @@
-const ipfsService = require('../services/ipfsService');
-const blockchainService = require('../services/blockchainService');
+const path = require('path');
+const { readRecords, writeRecords } = require('../utils/fileHandler');
+
+const PROFILES_PATH = path.join(__dirname, '..', 'data', 'profiles.json');
 
 // @desc    Create/Update Decentralized Patient Profile
 // @route   POST /api/v1/profile
 // @access  Public
 const updateProfile = async (req, res, next) => {
   try {
-    const { name, age, bloodGroup, location, allergies, medicalConditions } = req.body;
-    
+    const { name, age, bloodGroup, location, allergies, medicalConditions, address } = req.body;
+
     if (!name || !bloodGroup) {
-      return res.status(400).json({ success: false, message: 'Please provide valid Profile data' });
+      return res.status(400).json({ success: false, message: 'Please provide at least name and bloodGroup' });
     }
 
-    // Create a JSON Document for the profile
     const profileData = {
       name,
       age,
@@ -20,28 +21,21 @@ const updateProfile = async (req, res, next) => {
       location,
       allergies: allergies || [],
       medicalConditions: medicalConditions || [],
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
 
-    const dataBuffer = Buffer.from(JSON.stringify(profileData));
+    const profiles = await readRecords(PROFILES_PATH);
+    const idx = profiles.findIndex(p => p.address === address);
+    const entry = { address, profileData, updatedAt: new Date().toISOString() };
+    if (idx >= 0) profiles[idx] = entry;
+    else profiles.push(entry);
+    await writeRecords(PROFILES_PATH, profiles);
 
-    // Upload to IPFS directly
-    const cid = await ipfsService.uploadData(dataBuffer);
-
-    // Link IPFS CID to Patient Wallet Address on Ganache
-    // The backend uses its own wallet from .env to pay the Gas fee
-    const receipt = await blockchainService.updateProfile(cid);
-
-    res.status(201).json({ 
-      success: true, 
-      message: 'Secure Identity Mapped',
-      data: {
-        profileCid: cid,
-        transactionHash: receipt.hash,
-        blockNumber: receipt.blockNumber
-      }
+    res.status(201).json({
+      success: true,
+      message: 'Profile saved',
+      data: { profileData }
     });
-
   } catch (error) {
     next(error);
   }
@@ -53,31 +47,16 @@ const updateProfile = async (req, res, next) => {
 const getProfile = async (req, res, next) => {
   try {
     const { address } = req.params;
-    
-    // Fetch CID from Smart Contract mapping
-    const profile = await blockchainService.contract.patientProfiles(address);
-    if (!profile.exists) {
-        return res.status(404).json({ success: false, message: "Decentralized Profile not found for this address" });
+
+    const profiles = await readRecords(PROFILES_PATH);
+    const entry = profiles.find(p => p.address === address);
+    if (!entry) {
+      return res.status(404).json({ success: false, message: 'Profile not found' });
     }
-
-    // Retrieve the JSON Data from IPFS
-    const dataBuffer = await ipfsService.retrieveData(profile.profileCid);
-    const profileData = JSON.parse(dataBuffer.toString());
-
-    res.status(200).json({ 
-      success: true, 
-      data: {
-        onChainCid: profile.profileCid,
-        profileData
-      }
-    });
-
+    res.status(200).json({ success: true, data: { profileData: entry.profileData } });
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = {
-  updateProfile,
-  getProfile
-};
+module.exports = { updateProfile, getProfile };

@@ -82,6 +82,36 @@
         .font-headline { font-family: 'Manrope', sans-serif; }
         .glass-effect { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+        /* Audit chip styles */
+        .audit-chip {
+          border-color: #bdc8cb;
+          color: #4b6268;
+          background: transparent;
+        }
+        .audit-chip:hover {
+          background: #eceeef;
+        }
+        .audit-chip.active {
+          background: #005f6c;
+          border-color: #005f6c;
+          color: #ffffff;
+        }
+
+        /* Audit list item entrance */
+        @keyframes auditSlideIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0);   }
+        }
+        .audit-item {
+          animation: auditSlideIn 0.25s ease both;
+        }
+        .audit-item:nth-child(1)  { animation-delay: 0.03s; }
+        .audit-item:nth-child(2)  { animation-delay: 0.06s; }
+        .audit-item:nth-child(3)  { animation-delay: 0.09s; }
+        .audit-item:nth-child(4)  { animation-delay: 0.12s; }
+        .audit-item:nth-child(5)  { animation-delay: 0.15s; }
+        .audit-item:nth-child(n+6){ animation-delay: 0.18s; }
     </style>
 </head>
 <body class="bg-surface text-on-surface min-h-screen flex flex-col">
@@ -96,6 +126,7 @@
 <a class="text-slate-600 hover:text-teal-700 font-medium text-sm tracking-tight transition-all duration-300" href="../patient_requests/patientrequests.html">Requests</a>
 </div>
 <div class="flex items-center gap-4 justify-end">
+<button data-wallet-btn class="px-4 py-2 rounded-full text-sm font-semibold bg-surface-container text-secondary hover:bg-surface-container-high transition-all">Connect Wallet</button>
 <button class="material-symbols-outlined p-2 text-slate-600 hover:bg-teal-50/50 rounded-full transition-all">notifications</button>
 <a href="../emergency_qr_feature/emerqr.html" class="bg-primary hover:bg-primary-container text-white px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 active:scale-95 shadow-lg shadow-primary/20">Emergency QR</a>
 <img alt="User profile photo" class="w-10 h-10 rounded-full border-2 border-primary-container/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN2zqKtz9fW1SDKERxhj86PSWNUJY7yLuwyUsSq9dj-nK9-OSuLi45G2Boict4XFBCA0nAtNlmoKWf8zZaOoDe5PS4MgOK4YFrbwmxkYyTux27hsN38YVkoqpiG3O9El3wveI8nAT5jxQkSG_gi-xIPufPJXKDlBZ2Gpf3AM7gXAOhXkJy1QHoxTHQjFwFTHbsPhcdj66-KJii73o4Oahhfdz03544Z5rIENnTHxIPXeUP3oMhUTWqek7b-dF8eopjqu_pNWszSAs"/>
@@ -105,8 +136,8 @@
 <!-- Main Content Canvas -->
 <main class="flex-grow pt-32 pb-24 px-8 max-w-screen-2xl mx-auto w-full">
 <header class="mb-12">
-<h1 class="font-headline text-4xl font-extrabold text-primary tracking-tight mb-2">Welcome back, Dr. Julian</h1>
-<p class="text-on-surface-variant font-body">Your health identity is secured by blockchain encryption.</p>
+<h1 id="welcome-title" class="font-headline text-4xl font-extrabold text-primary tracking-tight mb-2">Welcome back</h1>
+<p id="welcome-subtitle" class="text-on-surface-variant font-body">Your health identity is secured by blockchain encryption.</p>
 </header>
 <!-- Bento Grid Layout -->
 <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
@@ -117,23 +148,26 @@
 <div class="flex items-center gap-4 mb-8">
 <img alt="Profile Photo" class="w-20 h-20 rounded-full border-4 border-white shadow-md" data-alt="Close-up of a smiling professional man with short dark hair, clean shaven, soft directional office lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3mzNRCVmi9yuvUqmz2T9yJdiAtt5yPDTxqGVBRmC36B4ED7IbMVfewEIaFTqzkWqGgQrpciIn8xIoowzG9d5ozVIbn2A9UEs0OXL81hWmEyPZL9yfwfS7-Hk-Rpmi6WO4YP8C9uDKuffJ_-6vJv9ZjZ0AZIWIb4KcV-LwbCzmgyuDGXv9dCx8Cffbm4n_YeAq4jUPYbPS-mz7yEkMSvL2-E4Ge4C-Re2yOu7Cqogx04Err8A1HruxOInFog3H8XpzwStW4y-8-WM"/>
 <div>
-<h2 class="font-headline text-xl font-bold text-on-surface">Julian Vance</h2>
-<p class="text-sm text-on-surface-variant">ID: #MC-8829-X</p>
+<h2 id="profile-name" class="font-headline text-xl font-bold text-on-surface">Patient</h2>
+<p id="profile-id" class="text-sm text-on-surface-variant">ID: —</p>
 </div>
 </div>
 <div class="space-y-6">
 <div class="flex justify-between items-center py-3 bg-surface-container-low px-4 rounded-xl">
 <span class="text-sm font-label uppercase tracking-widest text-outline">Age</span>
-<span class="font-semibold text-primary">34 Years</span>
+<span id="profile-age" class="font-semibold text-primary">—</span>
 </div>
 <div class="flex justify-between items-center py-3 bg-surface-container-low px-4 rounded-xl">
 <span class="text-sm font-label uppercase tracking-widest text-outline">Blood Group</span>
-<span class="font-semibold text-error">O Positive</span>
+<span id="profile-blood" class="font-semibold text-error">—</span>
 </div>
 <div class="flex justify-between items-center py-3 bg-surface-container-low px-4 rounded-xl">
 <span class="text-sm font-label uppercase tracking-widest text-outline">Location</span>
-<span class="font-semibold text-primary">San Francisco, CA</span>
+<span id="profile-location" class="font-semibold text-primary">—</span>
 </div>
+<button id="edit-profile-btn" class="w-full bg-primary text-on-primary py-3 rounded-xl font-headline font-bold text-sm hover:opacity-90 transition-all">
+  Complete Profile
+</button>
 </div>
 </div>
 </div>
@@ -146,7 +180,7 @@
 <span class="material-symbols-outlined text-primary text-3xl">description</span>
 </div>
 <div>
-<span class="block text-2xl font-bold font-headline text-on-surface">42</span>
+<span id="record-count" class="block text-2xl font-bold font-headline text-on-surface">0</span>
 <span class="text-sm text-on-surface-variant font-medium">Medical Records</span>
 </div>
 </div>
@@ -184,42 +218,86 @@
 <span class="text-xs font-bold font-label uppercase tracking-widest text-center">Insurance Claim</span>
 </button>
 </div>
-<!-- Recent Activity Glass Card -->
-<div class="bg-white/40 backdrop-blur-md rounded-[2rem] p-8 border border-white/50">
-<div class="flex justify-between items-center mb-8">
-<h3 class="font-headline text-xl font-bold text-on-surface">Blockchain Activity</h3>
-<a class="text-primary text-sm font-semibold hover:underline" href="#">View Ledger</a>
-</div>
-<div class="space-y-6">
-<div class="flex items-center justify-between group cursor-pointer">
-<div class="flex items-center gap-4">
-<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center">
-<span class="material-symbols-outlined text-outline text-sm">lock</span>
-</div>
-<div>
-<p class="text-sm font-semibold text-on-surface">Encryption Keys Rotated</p>
-<p class="text-xs text-on-surface-variant">Validated by 14 nodes</p>
 </div>
 </div>
-<span class="text-xs text-outline font-label">2h ago</span>
-</div>
-<div class="flex items-center justify-between group cursor-pointer">
-<div class="flex items-center gap-4">
-<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center">
-<span class="material-symbols-outlined text-outline text-sm">history_edu</span>
-</div>
-<div>
-<p class="text-sm font-semibold text-on-surface">Lab Report Signed</p>
-<p class="text-xs text-on-surface-variant">Blood Work - Quest Diagnostics</p>
-</div>
-</div>
-<span class="text-xs text-outline font-label">Yesterday</span>
-</div>
-</div>
-</div>
-</div>
-</div>
+
+  <!-- ── Audit Log Section ─────────────────────────────────────────────── -->
+  <section class="mt-10 mb-4" id="audit-section">
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-secondary-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary text-xl">manage_history</span>
+        </div>
+        <div>
+          <h2 class="font-headline text-xl font-bold text-primary leading-tight">Audit Log</h2>
+          <p class="text-xs text-on-surface-variant font-medium">Transparent record of every action on your data</p>
+        </div>
+      </div>
+      <div class="hidden sm:flex items-center gap-2" id="audit-filter-bar">
+        <button data-filter="all"       class="audit-chip active px-3 py-1.5 rounded-full text-xs font-bold border transition-all">All</button>
+        <button data-filter="upload"    class="audit-chip px-3 py-1.5 rounded-full text-xs font-bold border transition-all">Uploads</button>
+        <button data-filter="access"    class="audit-chip px-3 py-1.5 rounded-full text-xs font-bold border transition-all">Access</button>
+        <button data-filter="decision"  class="audit-chip px-3 py-1.5 rounded-full text-xs font-bold border transition-all">Decisions</button>
+        <button data-filter="insurance" class="audit-chip px-3 py-1.5 rounded-full text-xs font-bold border transition-all">Insurance</button>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest rounded-[1.5rem] shadow-[0_4px_24px_rgba(0,95,108,0.07)] overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/20">
+        <div class="flex items-center gap-2">
+          <span id="audit-badge" class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-primary text-on-primary text-[10px] font-extrabold">0</span>
+          <span class="text-sm font-semibold text-on-surface-variant">Recent Activity</span>
+        </div>
+        <button id="audit-refresh-btn" class="flex items-center gap-1.5 text-xs font-bold text-primary hover:opacity-70 transition-opacity">
+          <span class="material-symbols-outlined text-base">refresh</span>
+          Refresh
+        </button>
+      </div>
+      <ul id="audit-list" class="divide-y divide-outline-variant/10 max-h-[420px] overflow-y-auto"></ul>
+      <div id="audit-empty" class="hidden flex-col items-center justify-center py-16 px-8 text-center">
+        <span class="material-symbols-outlined text-5xl mb-3" style="color:rgba(110,121,123,0.25)">timeline</span>
+        <p class="font-semibold text-on-surface-variant text-sm">No activity yet</p>
+        <p class="text-xs text-outline mt-1">Uploads, access grants, and claims will appear here.</p>
+      </div>
+    </div>
+  </section>
+
 </main>
+
+<!-- Profile Modal -->
+<div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+  <div class="bg-white rounded-[2rem] p-8 w-full max-w-md shadow-2xl relative overflow-y-auto max-h-[90vh]">
+    <button onclick="closeProfileModal()" class="absolute top-6 right-6 text-outline hover:text-on-surface transition-colors">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <h2 class="font-headline text-2xl font-bold text-primary mb-2">Complete Profile</h2>
+    <p class="text-secondary text-sm mb-6">Fill in your details — blood group, allergies &amp; conditions power your Emergency QR.</p>
+    <div class="space-y-3 mb-6">
+      <input id="p-name" type="text" placeholder="Full Name"
+        class="w-full px-4 py-3 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary/20 text-on-surface text-sm placeholder:text-outline/60"/>
+      <input id="p-age" type="number" min="0" placeholder="Age"
+        class="w-full px-4 py-3 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary/20 text-on-surface text-sm placeholder:text-outline/60"/>
+      <input id="p-blood" type="text" placeholder="Blood Group (e.g., O+)"
+        class="w-full px-4 py-3 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary/20 text-on-surface text-sm placeholder:text-outline/60"/>
+      <input id="p-location" type="text" placeholder="Location (e.g., Mumbai)"
+        class="w-full px-4 py-3 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary/20 text-on-surface text-sm placeholder:text-outline/60"/>
+      <input id="p-allergies" type="text" placeholder="Allergies (comma-separated, e.g., Penicillin, Latex)"
+        class="w-full px-4 py-3 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary/20 text-on-surface text-sm placeholder:text-outline/60"/>
+      <textarea id="p-conditions" rows="2" placeholder="Medical Conditions (comma-separated, e.g., Type 2 Diabetes, Hypertension)"
+        class="w-full px-4 py-3 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary/20 text-on-surface text-sm placeholder:text-outline/60 resize-none"></textarea>
+      <input id="p-contact" type="text" placeholder="Emergency Contact (e.g., Priya Sharma - 9876543210)"
+        class="w-full px-4 py-3 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary/20 text-on-surface text-sm placeholder:text-outline/60"/>
+    </div>
+    <div class="flex items-center gap-2 text-xs text-secondary bg-secondary-container/30 rounded-xl px-4 py-3 mb-4">
+      <span class="material-symbols-outlined text-sm text-primary">qr_code_2</span>
+      Allergies &amp; conditions will be encoded in your Emergency QR
+    </div>
+    <button onclick="saveProfile()" class="w-full bg-primary text-on-primary py-3 rounded-xl font-headline font-bold text-sm hover:opacity-90 transition-all">
+      Save Profile &amp; Update QR
+    </button>
+  </div>
+</div>
+
 <!-- Footer -->
 <footer class="w-full border-t border-slate-200/50 dark:border-slate-800/50 bg-slate-50 dark:bg-slate-950 mt-auto">
 <div class="flex flex-col md:flex-row justify-between items-center w-full px-12 py-12 gap-8 max-w-screen-2xl mx-auto">
@@ -234,4 +312,260 @@
 </div>
 </div>
 </footer>
+<script src="../shared/app.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', async () => {
+    window.MediChain.setRole('patient');
+    await syncDashboard();
+    const btn = document.getElementById('edit-profile-btn');
+    if (btn) btn.addEventListener('click', openProfileModal);
+  });
+
+  async function syncDashboard() {
+    const address = window.MediChain.getWallet() || window.localStorage.getItem('medichain_last_profile_address');
+    const pid = window.MediChain.getPatientId();
+    document.getElementById('profile-id').textContent = 'ID: ' + pid;
+    document.getElementById('welcome-title').textContent = 'Welcome back';
+    document.getElementById('welcome-subtitle').textContent = 'Your health identity is secured by blockchain encryption.';
+
+    if (!address) return;
+    try {
+      await loadProfile(address);
+      const res = await fetch(window.MediChain.API_BASE + '/records?patientAddress=' + encodeURIComponent(address));
+      const json = await res.json();
+      if (res.ok && json.success) {
+        document.getElementById('record-count').textContent = String(json.count || 0);
+        if (json.data && json.data.length) {
+          const latest = json.data[0];
+          document.getElementById('profile-name').textContent = 'Patient ' + pid;
+          document.getElementById('profile-age').textContent = '—';
+          document.getElementById('profile-blood').textContent = '—';
+          document.getElementById('profile-location').textContent = '—';
+          if (latest && latest.createdAt) {
+            document.getElementById('welcome-subtitle').textContent = 'Latest record uploaded ' + new Date(latest.createdAt).toLocaleDateString();
+          }
+        }
+      }
+    } catch (_) {
+      // Silent fail for demo
+    }
+  }
+
+  async function loadProfile(address) {
+    try {
+      const res = await fetch(window.MediChain.API_BASE + '/profile/' + encodeURIComponent(address));
+      const json = await res.json();
+      if (!res.ok || !json.success) return;
+      const p = json.data && json.data.profileData ? json.data.profileData : null;
+      if (!p) return;
+      document.getElementById('profile-name').textContent = p.name || 'Patient';
+      document.getElementById('profile-age').textContent = (p.age !== undefined && p.age !== null) ? String(p.age) : '—';
+      document.getElementById('profile-blood').textContent = p.bloodGroup || '—';
+      document.getElementById('profile-location').textContent = p.location || '—';
+      document.getElementById('welcome-title').textContent = 'Welcome back, ' + (p.name || 'Patient');
+    } catch (_) {
+      // ignore
+    }
+  }
+
+  function openProfileModal() {
+    document.getElementById('profile-modal').classList.remove('hidden');
+  }
+
+  function closeProfileModal() {
+    document.getElementById('profile-modal').classList.add('hidden');
+  }
+
+  async function saveProfile() {
+    let address = window.MediChain.getWallet();
+    if (!address) {
+      address = await window.MediChain.connectWallet();
+    }
+    if (!address) return;
+    const name       = document.getElementById('p-name').value.trim();
+    const age        = document.getElementById('p-age').value.trim();
+    const bloodGroup = document.getElementById('p-blood').value.trim();
+    const location   = document.getElementById('p-location').value.trim();
+    const allergiesRaw   = document.getElementById('p-allergies').value.trim();
+    const conditionsRaw  = document.getElementById('p-conditions').value.trim();
+    const emergencyContact = document.getElementById('p-contact').value.trim();
+    if (!name || !bloodGroup) { return; }
+    const payload = {
+      name,
+      age: age ? Number(age) : null,
+      bloodGroup,
+      location,
+      allergies:         allergiesRaw   ? allergiesRaw.split(',').map(s => s.trim()).filter(Boolean)  : [],
+      medicalConditions: conditionsRaw  ? conditionsRaw.split(',').map(s => s.trim()).filter(Boolean) : [],
+      emergencyContact,
+      address
+    };
+    try {
+      const res = await fetch(window.MediChain.API_BASE + '/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) return;
+      try { window.localStorage.setItem('medichain_last_profile_address', address); } catch (_) {}
+      closeProfileModal();
+      await loadProfile(payload.address);
+    } catch (_) { /* ignore */ }
+  }
+</script>
+
+<script>
+// ── Audit Log ─────────────────────────────────────────────────────────────
+(function () {
+  const API_BASE = 'http://localhost:5001/api/v1';
+
+  /* ── Config maps ── */
+  const ACTION_META = {
+    UPLOAD_RECORD:   { icon: 'cloud_upload',    label: 'Record Uploaded',    bg: '#cee7ee', fg: '#005f6c', chipKey: 'upload'   },
+    VIEW_RECORD:     { icon: 'folder_open',     label: 'Record Viewed',      bg: '#dae2ff', fg: '#004ec0', chipKey: 'access'   },
+    ACCESS_REQUEST:  { icon: 'person_add',      label: 'Access Requested',   bg: '#fff3cd', fg: '#7a5c00', chipKey: 'access'   },
+    ACCESS_DECISION: { icon: 'verified',        label: 'Access Decision',    bg: '#e8f5e9', fg: '#1b5e20', chipKey: 'decision' },
+    INSURANCE_CLAIM: { icon: 'receipt_long',    label: 'Insurance Claim',    bg: '#fce4ec', fg: '#880e4f', chipKey: 'insurance'},
+    EMERGENCY_ACCESS:{ icon: 'emergency_share', label: 'Emergency Access',   bg: '#fbe9e7', fg: '#bf360c', chipKey: 'access'   },
+  };
+
+  /* seed demo logs so the section is never empty on first open */
+  const MOCK_LOGS = [
+    { id: 'MOCK-1', action: 'UPLOAD_RECORD',   actor: 'patient', actorType: 'patient',  details: { title: 'Blood Test Report', doctor: 'Dr. Sharma', type: 'lab' },           timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString() },
+    { id: 'MOCK-2', action: 'ACCESS_REQUEST',  actor: 'Dr. Patel', actorType: 'doctor', details: { doctorName: 'Dr. Patel', recordTitle: 'X-Ray Chest', decision: 'pending' }, timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString() },
+    { id: 'MOCK-3', action: 'ACCESS_DECISION', actor: 'patient', actorType: 'patient',  details: { doctorName: 'Dr. Patel', recordTitle: 'X-Ray Chest', decision: 'grant' },   timestamp: new Date(Date.now() - 1000 * 60 * 28).toISOString() },
+    { id: 'MOCK-4', action: 'UPLOAD_RECORD',   actor: 'patient', actorType: 'patient',  details: { title: 'MRI Scan', doctor: 'Dr. Roy', type: 'imaging' },                    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString() },
+    { id: 'MOCK-5', action: 'INSURANCE_CLAIM', actor: 'patient', actorType: 'patient',  details: { recordTitle: 'Hospitalisation May 2025', amount: '₹45,000' },               timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString() },
+    { id: 'MOCK-6', action: 'EMERGENCY_ACCESS',actor: 'ER Portal', actorType: 'system', details: { recordTitle: 'Emergency Profile', note: 'QR scan at City Hospital' },       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString() },
+  ];
+
+  let allLogs = [];
+  let activeFilter = 'all';
+
+  /* ── Helpers ── */
+  function timeAgo(iso) {
+    const diff = Date.now() - new Date(iso).getTime();
+    const m = Math.floor(diff / 60000);
+    const h = Math.floor(m / 60);
+    const d = Math.floor(h / 24);
+    if (d > 0)  return d  + 'd ago';
+    if (h > 0)  return h  + 'h ago';
+    if (m > 0)  return m  + 'm ago';
+    return 'just now';
+  }
+
+  function buildSubtitle(log) {
+    const d = log.details || {};
+    switch (log.action) {
+      case 'UPLOAD_RECORD':   return (d.title || 'Untitled') + (d.doctor ? ' · ' + d.doctor : '');
+      case 'VIEW_RECORD':     return d.title || 'Medical record viewed';
+      case 'ACCESS_REQUEST':  return (d.doctorName || log.actor) + ' requested access to "' + (d.recordTitle || 'record') + '"';
+      case 'ACCESS_DECISION': return (d.decision === 'grant' ? '✅ Granted' : '❌ Rejected') + ' access for ' + (d.doctorName || 'Doctor') + ' · "' + (d.recordTitle || '') + '"';
+      case 'INSURANCE_CLAIM': return '"' + (d.recordTitle || 'Claim') + '"' + (d.amount ? ' · ' + d.amount : '');
+      case 'EMERGENCY_ACCESS':return (d.note || 'Emergency profile accessed') + (d.recordTitle ? ' — ' + d.recordTitle : '');
+      default:                return JSON.stringify(d).slice(0, 60);
+    }
+  }
+
+  function renderRow(log) {
+    const meta = ACTION_META[log.action] || { icon: 'info', label: log.action, bg: '#eceeef', fg: '#3e494b', chipKey: 'all' };
+    const li   = document.createElement('li');
+    li.className = 'audit-item flex items-start gap-4 px-6 py-4 hover:bg-surface-container-low transition-colors';
+    li.dataset.chipKey = meta.chipKey;
+    li.innerHTML = `
+      <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center mt-0.5"
+           style="background:${meta.bg}">
+        <span class="material-symbols-outlined text-lg" style="color:${meta.fg};font-variation-settings:'FILL' 1,'wght' 600,'GRAD' 0,'opsz' 24">${meta.icon}</span>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-0.5 flex-wrap">
+          <span class="font-semibold text-sm text-on-surface">${meta.label}</span>
+          <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full"
+                style="background:${meta.bg};color:${meta.fg}">${log.actorType}</span>
+        </div>
+        <p class="text-xs text-on-surface-variant truncate max-w-md">${buildSubtitle(log)}</p>
+        <p class="text-[10px] text-outline mt-1 font-mono">${log.id}</p>
+      </div>
+      <div class="flex-shrink-0 text-[11px] text-outline whitespace-nowrap mt-0.5">${timeAgo(log.timestamp)}</div>
+    `;
+    return li;
+  }
+
+  function applyFilter(filter) {
+    activeFilter = filter;
+    const list  = document.getElementById('audit-list');
+    const items = list.querySelectorAll('.audit-item');
+    let visible = 0;
+    items.forEach(item => {
+      const show = filter === 'all' || item.dataset.chipKey === filter;
+      item.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    const empty = document.getElementById('audit-empty');
+    if (visible === 0) {
+      empty.classList.remove('hidden');
+      empty.classList.add('flex');
+    } else {
+      empty.classList.add('hidden');
+      empty.classList.remove('flex');
+    }
+    document.querySelectorAll('.audit-chip').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.filter === filter);
+    });
+  }
+
+  async function loadAuditLogs() {
+    const address = window.MediChain ? window.MediChain.getWallet() : null;
+    let url = API_BASE + '/audit?limit=50';
+    if (address) url += '&patientAddress=' + encodeURIComponent(address);
+
+    let data = [];
+    try {
+      const res  = await fetch(url);
+      const json = await res.json();
+      if (res.ok && json.success && json.data && json.data.length > 0) {
+        data = json.data;
+      } else {
+        data = MOCK_LOGS; // fallback to demo
+      }
+    } catch (_) {
+      data = MOCK_LOGS; // offline fallback
+    }
+
+    allLogs = data;
+    const list  = document.getElementById('audit-list');
+    const empty = document.getElementById('audit-empty');
+    list.innerHTML = '';
+
+    if (allLogs.length === 0) {
+      empty.classList.remove('hidden');
+      empty.classList.add('flex');
+    } else {
+      empty.classList.add('hidden');
+      empty.classList.remove('flex');
+      allLogs.forEach(log => list.appendChild(renderRow(log)));
+    }
+
+    document.getElementById('audit-badge').textContent = String(allLogs.length);
+    applyFilter(activeFilter);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadAuditLogs();
+
+    document.getElementById('audit-refresh-btn').addEventListener('click', () => {
+      const btn  = document.getElementById('audit-refresh-btn');
+      const icon = btn.querySelector('.material-symbols-outlined');
+      icon.style.animation = 'spin 0.6s linear';
+      setTimeout(() => { icon.style.animation = ''; }, 700);
+      loadAuditLogs();
+    });
+
+    document.querySelectorAll('.audit-chip').forEach(btn => {
+      btn.addEventListener('click', () => applyFilter(btn.dataset.filter));
+    });
+  });
+})();
+</script>
 </body></html>

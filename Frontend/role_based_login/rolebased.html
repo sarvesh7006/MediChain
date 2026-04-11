@@ -123,7 +123,7 @@
                     </button>
 </div>
 <!-- Wallet Integration -->
-<button class="w-full mb-8 flex items-center justify-center gap-3 py-4 rounded-xl border border-outline-variant/30 bg-surface-container-lowest hover:bg-surface-container-low transition-colors group">
+<button data-wallet-btn class="w-full mb-8 flex items-center justify-center gap-3 py-4 rounded-xl border border-outline-variant/30 bg-surface-container-lowest hover:bg-surface-container-low transition-colors group">
 <span class="material-symbols-outlined text-tertiary" data-icon="account_balance_wallet">account_balance_wallet</span>
 <span class="font-semibold text-on-surface-variant">Connect Health Wallet</span>
 <span class="material-symbols-outlined text-xs text-outline opacity-0 group-hover:opacity-100 transition-opacity" data-icon="arrow_forward">arrow_forward</span>
@@ -215,6 +215,7 @@
 </div>
 </div>
 </body>
+<script src="../shared/app.js"></script>
 <script>
   // Tab switching
   const tabPatient = document.getElementById('tab-patient');
@@ -240,19 +241,33 @@
     doctorFields.classList.remove('hidden');
   });
 
+  // Connect wallet and route to appropriate portal
+  const walletBtn = document.querySelector('[data-wallet-btn]');
+  if (walletBtn) {
+    walletBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        await window.MediChain.connectWallet();
+        if (isDoctor) {
+          window.location.href = '../doctor_dashboard/doctordashboard.html';
+        } else {
+          window.location.href = '../records/records.html#upload';
+        }
+      } catch (err) {
+        // Connection failed; MediChain helper will show a banner if needed
+      }
+    });
+  }
+
   // Form submission routing
   document.querySelector('form').addEventListener('submit', (e) => {
     e.preventDefault();
     if (isDoctor) {
       window.location.href = '../doctor_dashboard/doctordashboard.html';
     } else {
-      window.location.href = '../dashboard/code.html';
+      window.location.href = '../records/records.html#upload';
     }
   });
 
-  // Connect Health Wallet button
-  document.querySelector('button[class*="Connect Health"], button:has(.material-symbols-outlined)').addEventListener('click', () => {
-    window.location.href = '../dashboard/code.html';
-  });
 </script>
 </html>
