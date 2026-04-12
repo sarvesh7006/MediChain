@@ -3,7 +3,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Insurance Claim | MediChain</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" data-cg="false"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -55,6 +55,8 @@
       <a class="text-slate-600 hover:text-teal-700 font-medium text-sm tracking-tight transition-all duration-300" href="../patient_requests/patientrequests.html">Requests</a>
     </div>
     <div class="flex items-center gap-4 justify-end">
+      <button data-wallet-btn class="px-4 py-2 rounded-full text-sm font-semibold bg-surface-container text-secondary hover:bg-surface-container-high transition-all">Connect Wallet</button>
+      <button id="sign-out-btn" onclick="window.MediChain.disconnectWallet(); window.location.href='../landing_page/landingpage.html'" class="hidden px-4 py-2 rounded-full text-sm font-semibold bg-error/10 text-error hover:bg-error/20 transition-all">Sign Out</button>
       <button class="material-symbols-outlined p-2 text-slate-600 hover:bg-teal-50/50 rounded-full transition-all">notifications</button>
       <a href="../emergency_qr_feature/emerqr.html" class="bg-primary hover:bg-primary-container text-white px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 active:scale-95 shadow-lg shadow-primary/20">Emergency QR</a>
       <img alt="User profile" class="w-10 h-10 rounded-full border-2 border-primary-container/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN2zqKtz9fW1SDKERxhj86PSWNUJY7yLuwyUsSq9dj-nK9-OSuLi45G2Boict4XFBCA0nAtNlmoKWf8zZaOoDe5PS4MgOK4YFrbwmxkYyTux27hsN38YVkoqpiG3O9El3wveI8nAT5jxQkSG_gi-xIPufPJXKDlBZ2Gpf3AM7gXAOhXkJy1QHoxTHQjFwFTHbsPhcdj66-KJii73o4Oahhfdz03544Z5rIENnTHxIPXeUP3oMhUTWqek7b-dF8eopjqu_pNWszSAs"/>
@@ -268,12 +270,13 @@ const TYPE_LABEL = { lab:'Lab Report', imaging:'Imaging', prescription:'Prescrip
 /* ── Load records ── */
 async function loadRecords() {
   const address = window.MediChain ? window.MediChain.getWallet() : null;
-  const pid     = window.MediChain ? window.MediChain.getPatientId() : null;
 
-  let url = API_BASE + '/records?';
-  if (address) url += 'patientAddress=' + encodeURIComponent(address);
-  else if (pid) url += 'patientId='     + encodeURIComponent(pid);
-  else { showRecordEmpty(); return; }
+  if (!address) {
+    showRecordEmpty();
+    return;
+  }
+
+  let url = API_BASE + '/records?patientAddress=' + encodeURIComponent(address);
 
   try {
     const res  = await fetch(url);
@@ -407,12 +410,16 @@ async function submitClaim() {
 /* ── Load past claims ── */
 async function loadClaims() {
   const address = window.MediChain ? window.MediChain.getWallet() : null;
-  const pid     = window.MediChain ? window.MediChain.getPatientId() : null;
 
-  let url = API_BASE + '/insurance/claims?';
-  if (address) url += 'patientAddress=' + encodeURIComponent(address);
-  else if (pid) url += 'patientId='     + encodeURIComponent(pid);
-  else { hideClaims(); return; }
+  if (!address) {
+    document.getElementById('claims-loading').classList.add('hidden');
+    document.getElementById('claims-empty').classList.remove('hidden');
+    document.getElementById('claims-empty').classList.add('flex');
+    document.getElementById('claims-empty').innerHTML = '<div class="flex flex-col items-center justify-center py-16"><span class="material-symbols-outlined text-5xl text-secondary mb-4">wallet</span><p class="text-secondary text-center">Please connect your wallet to view your insurance claims.</p></div>';
+    return;
+  }
+
+  let url = API_BASE + '/insurance/claims?patientAddress=' + encodeURIComponent(address);
 
   try {
     const res  = await fetch(url);
@@ -565,9 +572,20 @@ function showToast(msg, isError = false) {
 /* ── Init ── */
 window.addEventListener('DOMContentLoaded', () => {
   if (window.MediChain) window.MediChain.setRole('patient');
+  updateAuthUI();
   recalcPayout();
   loadRecords();
   loadClaims();
 });
+
+function updateAuthUI() {
+  const address = window.MediChain ? window.MediChain.getWallet() : null;
+  const signOutBtn = document.getElementById('sign-out-btn');
+  if (address) {
+    signOutBtn.classList.remove('hidden');
+  } else {
+    signOutBtn.classList.add('hidden');
+  }
+}
 </script>
 </body></html>

@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const path = require('path');
 const { validationResult } = require('express-validator');
-const ipfsService = require('../services/ipfsService');
+const pinataService = require('../services/pinataService');
 const blockchainService = require('../services/blockchainService');
 const { readRecords } = require('../utils/fileHandler');
 
@@ -121,8 +121,8 @@ const verifyRecord = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Record not found on blockchain' });
     }
 
-    // 2. Fetch raw data from IPFS using the CID from the blockchain
-    const dataBuffer = await ipfsService.retrieveData(blockchainRecord.ipfsHash);
+    // 2. Fetch raw data from Pinata IPFS using the CID from the blockchain
+    const dataBuffer = await pinataService.retrieveFile(blockchainRecord.ipfsHash);
 
     // 3. Recalculate hash of the retrieved IPFS data
     const hashSum = crypto.createHash('sha256');

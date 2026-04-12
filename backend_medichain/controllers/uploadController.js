@@ -3,7 +3,7 @@ const path = require('path');
 const fse = require('fs-extra');
 const { v4: uuidv4 } = require('uuid');
 const { validationResult } = require('express-validator');
-const ipfsService = require('../services/ipfsService');
+const pinataService = require('../services/pinataService');
 const blockchainService = require('../services/blockchainService');
 const { readRecords, writeRecords } = require('../utils/fileHandler');
 const { appendAuditLog } = require('./auditController');
@@ -44,8 +44,8 @@ const uploadData = async (req, res, next) => {
     hashSum.update(dataBuffer);
     const dataHash = hashSum.digest('hex');
 
-    // 2. Upload to IPFS
-    const cid = await ipfsService.uploadData(dataBuffer);
+    // 2. Upload to Pinata IPFS
+    const cid = await pinataService.uploadFile(dataBuffer, fileName || 'medical-record');
 
     // 3b. Persist file to local uploads folder (demo file storage)
     const provisionalId = `REC-${uuidv4()}`;

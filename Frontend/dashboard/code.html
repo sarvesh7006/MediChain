@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>MediChain Dashboard</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" data-cg="false"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -127,6 +127,7 @@
 </div>
 <div class="flex items-center gap-4 justify-end">
 <button data-wallet-btn class="px-4 py-2 rounded-full text-sm font-semibold bg-surface-container text-secondary hover:bg-surface-container-high transition-all">Connect Wallet</button>
+<button id="sign-out-btn" onclick="window.MediChain.disconnectWallet(); window.location.href='../landing_page/landingpage.html'" class="hidden px-4 py-2 rounded-full text-sm font-semibold bg-error/10 text-error hover:bg-error/20 transition-all">Sign Out</button>
 <button class="material-symbols-outlined p-2 text-slate-600 hover:bg-teal-50/50 rounded-full transition-all">notifications</button>
 <a href="../emergency_qr_feature/emerqr.html" class="bg-primary hover:bg-primary-container text-white px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 active:scale-95 shadow-lg shadow-primary/20">Emergency QR</a>
 <img alt="User profile photo" class="w-10 h-10 rounded-full border-2 border-primary-container/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN2zqKtz9fW1SDKERxhj86PSWNUJY7yLuwyUsSq9dj-nK9-OSuLi45G2Boict4XFBCA0nAtNlmoKWf8zZaOoDe5PS4MgOK4YFrbwmxkYyTux27hsN38YVkoqpiG3O9El3wveI8nAT5jxQkSG_gi-xIPufPJXKDlBZ2Gpf3AM7gXAOhXkJy1QHoxTHQjFwFTHbsPhcdj66-KJii73o4Oahhfdz03544Z5rIENnTHxIPXeUP3oMhUTWqek7b-dF8eopjqu_pNWszSAs"/>
@@ -317,12 +318,23 @@
   window.addEventListener('DOMContentLoaded', async () => {
     window.MediChain.setRole('patient');
     await syncDashboard();
+    updateAuthUI();
     const btn = document.getElementById('edit-profile-btn');
     if (btn) btn.addEventListener('click', openProfileModal);
   });
 
+  function updateAuthUI() {
+    const address = window.MediChain.getWallet();
+    const signOutBtn = document.getElementById('sign-out-btn');
+    if (address) {
+      signOutBtn.classList.remove('hidden');
+    } else {
+      signOutBtn.classList.add('hidden');
+    }
+  }
+
   async function syncDashboard() {
-    const address = window.MediChain.getWallet() || window.localStorage.getItem('medichain_last_profile_address');
+    const address = window.MediChain.getWallet();
     const pid = window.MediChain.getPatientId();
     document.getElementById('profile-id').textContent = 'ID: ' + pid;
     document.getElementById('welcome-title').textContent = 'Welcome back';
@@ -379,9 +391,9 @@
   async function saveProfile() {
     let address = window.MediChain.getWallet();
     if (!address) {
-      address = await window.MediChain.connectWallet();
+      alert('Please connect your wallet first by clicking "Connect Wallet"');
+      return;
     }
-    if (!address) return;
     const name       = document.getElementById('p-name').value.trim();
     const age        = document.getElementById('p-age').value.trim();
     const bloodGroup = document.getElementById('p-blood').value.trim();
@@ -408,7 +420,6 @@
       });
       const json = await res.json();
       if (!res.ok || !json.success) return;
-      try { window.localStorage.setItem('medichain_last_profile_address', address); } catch (_) {}
       closeProfileModal();
       await loadProfile(payload.address);
     } catch (_) { /* ignore */ }
@@ -517,6 +528,14 @@
 
   async function loadAuditLogs() {
     const address = window.MediChain ? window.MediChain.getWallet() : null;
+    
+    if (!address) {
+      document.getElementById('audit-empty').classList.remove('hidden');
+      document.getElementById('audit-empty').classList.add('flex');
+      document.getElementById('audit-empty').textContent = 'Please connect your wallet to view audit logs.';
+      return;
+    }
+    
     let url = API_BASE + '/audit?limit=50';
     if (address) url += '&patientAddress=' + encodeURIComponent(address);
 
@@ -526,11 +545,9 @@
       const json = await res.json();
       if (res.ok && json.success && json.data && json.data.length > 0) {
         data = json.data;
-      } else {
-        data = MOCK_LOGS; // fallback to demo
       }
     } catch (_) {
-      data = MOCK_LOGS; // offline fallback
+      // offline - no mock logs
     }
 
     allLogs = data;

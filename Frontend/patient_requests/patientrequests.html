@@ -5,7 +5,7 @@
 <title>MediChain | My Access Requests</title>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" data-cg="false"></script>
 <script id="tailwind-config">
   tailwind.config = {
     darkMode: "class",
@@ -53,6 +53,7 @@
     </div>
     <div class="flex items-center gap-4 justify-end">
       <button data-wallet-btn class="px-4 py-2 rounded-full text-sm font-semibold bg-surface-container text-secondary hover:bg-surface-container-high transition-all">Connect Wallet</button>
+      <button id="sign-out-btn" onclick="window.MediChain.disconnectWallet(); window.location.href='../landing_page/landingpage.html'" class="hidden px-4 py-2 rounded-full text-sm font-semibold bg-error/10 text-error hover:bg-error/20 transition-all">Sign Out</button>
       <button class="material-symbols-outlined p-2 text-slate-600 hover:bg-teal-50/50 rounded-full transition-all">notifications</button>
       <a href="../emergency_qr_feature/emerqr.html" class="bg-primary hover:bg-primary-container text-white px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 active:scale-95 shadow-lg shadow-primary/20">
         Emergency QR
@@ -321,7 +322,12 @@
     // ── Step 1: try blockchain tx (optional — won't block if wallet / contract unavailable) ──
     if (action === 'grant' || action === 'revoke') {
       try {
-        await ensureWallet();
+        const address = window.MediChain.getWallet();
+        if (!address) {
+          showToast('Please connect your wallet first by clicking "Connect Wallet"', true);
+          closeConfirm();
+          return;
+        }
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer   = await provider.getSigner();
         const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
@@ -385,10 +391,28 @@
   // ── Init ──────────────────────────────────────────────────────────
   window.addEventListener('DOMContentLoaded', () => {
     window.MediChain.setRole('patient');
+    updateAuthUI();
     loadRequests();
   });
 
+  function updateAuthUI() {
+    const address = window.MediChain.getWallet();
+    const signOutBtn = document.getElementById('sign-out-btn');
+    if (address) {
+      signOutBtn.classList.remove('hidden');
+    } else {
+      signOutBtn.classList.add('hidden');
+    }
+  }
+
   async function loadRequests() {
+    const address = window.MediChain.getWallet();
+    if (!address) {
+      const container = document.querySelector('.requests-container') || document.body;
+      container.innerHTML = '<div class="flex flex-col items-center justify-center py-16"><span class="material-symbols-outlined text-5xl text-secondary mb-4">wallet</span><p class="text-secondary text-center">Please connect your wallet to view your requests.</p></div>';
+      return;
+    }
+    
     const pid = window.MediChain.getPatientId();
     try {
       const res = await fetch(window.MediChain.API_BASE + '/requests?patientId=' + encodeURIComponent(pid));

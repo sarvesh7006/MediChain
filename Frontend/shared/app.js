@@ -33,6 +33,11 @@
     if (!window.ethereum || !window.ethereum.request) {
       return null;
     }
+    try {
+      // Disconnect first to force MetaMask to show connection popup
+      await window.ethereum.request({ method: 'wallet_revokePermissions', params: [{ eth_accounts: {} }] }).catch(() => {});
+    } catch { /* ignore revoke errors */ }
+    
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     const address = accounts && accounts[0] ? accounts[0] : null;
     if (address) {
@@ -62,6 +67,17 @@
     if (role) setLocal('medichain_role', role);
   }
 
+  function disconnectWallet() {
+    try {
+      window.localStorage.removeItem('medichain_wallet');
+      window.localStorage.removeItem('medichain_patient_id');
+      window.localStorage.removeItem('medichain_role');
+      window.localStorage.removeItem('medichain_last_profile_address');
+    } catch { /* noop */ }
+    updateWalletButton();
+    return true;
+  }
+
   window.MediChain = {
     API_BASE,
     connectWallet,
@@ -69,7 +85,8 @@
     getPatientId,
     shortAddr,
     setRole,
-    updateWalletButton
+    updateWalletButton,
+    disconnectWallet
   };
 
   document.addEventListener('DOMContentLoaded', () => {

@@ -5,7 +5,7 @@
 <title>MediChain Doctor Portal | Request Patient Access</title>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" data-cg="false"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 <script id="tailwind-config">
   tailwind.config = {
@@ -74,19 +74,20 @@
       <a class="font-semibold tracking-tight text-slate-500 hover:text-teal-600 transition-colors text-sm" href="../doctor_dashboard/requests.html">Requests</a>
     </div>
     <div class="flex items-center gap-3 justify-end">
-      <button data-wallet-btn class="px-4 py-2 rounded-full text-sm font-semibold bg-surface-container text-secondary hover:bg-surface-container-high transition-all">Connect Wallet</button>
-      <button onclick="openScanner()" class="bg-primary text-on-primary px-4 py-2 rounded-xl font-headline font-bold text-sm flex items-center gap-2 hover:opacity-85 transition-all">
-        <span class="material-symbols-outlined text-[18px]">qr_code_scanner</span>
-        Scan QR
-      </button>
-      <div class="flex items-center gap-1 text-slate-500">
-        <span class="material-symbols-outlined p-2 rounded-full hover:bg-teal-50/50 cursor-pointer">notifications</span>
-        <span class="material-symbols-outlined p-2 rounded-full hover:bg-teal-50/50 cursor-pointer">settings</span>
-      </div>
-      <div class="w-9 h-9 rounded-full overflow-hidden border-2 border-secondary-container">
-        <img alt="Doctor profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0fswyWacewAI3Rs8CBsC-R_4YCzyFjBTEwKhKxWV0isBePniNhiShHv-Fz7mGheerdplzjxFIAjO-Z4Fa4Rw1GCojGwtrB3VkVZ2tWAj9eunvhfx6pLx7DVmda6LqfBNMtc5wOHScLjEOBfjMJ_3DpR9etD7lBcrOjxeMPV6ZYpnyasypxwA3buPJBRRVXPj0FA76gAZEqG9v3_7nUjEVmRUJOyH5yewKIdabN7nlHs9VJ1yG6pJ3xc8kdbD7iOjkei52mMg88dE"/>
-      </div>
-    </div>
+       <button data-wallet-btn class="px-4 py-2 rounded-full text-sm font-semibold bg-surface-container text-secondary hover:bg-surface-container-high transition-all">Connect Wallet</button>
+       <button id="sign-out-btn" onclick="window.MediChain.disconnectWallet(); window.location.href='../landing_page/landingpage.html'" class="hidden px-4 py-2 rounded-full text-sm font-semibold bg-error/10 text-error hover:bg-error/20 transition-all">Sign Out</button>
+       <button onclick="openScanner()" class="bg-primary text-on-primary px-4 py-2 rounded-xl font-headline font-bold text-sm flex items-center gap-2 hover:opacity-85 transition-all">
+         <span class="material-symbols-outlined text-[18px]">qr_code_scanner</span>
+         Scan QR
+       </button>
+       <div class="flex items-center gap-1 text-slate-500">
+         <span class="material-symbols-outlined p-2 rounded-full hover:bg-teal-50/50 cursor-pointer">notifications</span>
+         <span class="material-symbols-outlined p-2 rounded-full hover:bg-teal-50/50 cursor-pointer">settings</span>
+       </div>
+       <div class="w-9 h-9 rounded-full overflow-hidden border-2 border-secondary-container">
+         <img alt="Doctor profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0fswyWacewAI3Rs8CBsC-R_4YCzyFjBTEwKhKxWV0isBePniNhiShHv-Fz7mGheerdplzjxFIAjO-Z4Fa4Rw1GCojGwtrB3VkVZ2tWAj9eunvhfx6pLx7DVmda6LqfBNMtc5wOHScLjEOBfjMJ_3DpR9etD7lBcrOjxeMPV6ZYpnyasypxwA3buPJBRRVXPj0FA76gAZEqG9v3_7nUjEVmRUJOyH5yewKIdabN7nlHs9VJ1yG6pJ3xc8kdbD7iOjkei52mMg88dE"/>
+       </div>
+     </div>
   </div>
 </nav>
 
@@ -596,13 +597,17 @@
 
   async function viewGrantedRecord(recordId) {
     try {
-      await ensureWallet();
+      const address = window.MediChain.getWallet();
+      if (!address) {
+        showToast('Please connect your wallet first by clicking "Connect Wallet"', true);
+        return;
+      }
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
-      const address = await signer.getAddress();
+      const signerAddress = await signer.getAddress();
       const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
-      const allowed = await contract.checkAccess(Number(recordId), address);
+      const allowed = await contract.checkAccess(Number(recordId), signerAddress);
       if (!allowed) {
         showToast('Access not granted yet for this record.', true);
         return;
@@ -931,8 +936,19 @@
 
   window.addEventListener('DOMContentLoaded', () => {
     window.MediChain.setRole('doctor');
+    updateAuthUI();
     loadAccessLog();
     checkPortalStatus();
   });
+
+  function updateAuthUI() {
+    const address = window.MediChain.getWallet();
+    const signOutBtn = document.getElementById('sign-out-btn');
+    if (address) {
+      signOutBtn.classList.remove('hidden');
+    } else {
+      signOutBtn.classList.add('hidden');
+    }
+  }
 </script>
 </body></html>
