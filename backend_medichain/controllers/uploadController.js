@@ -19,6 +19,10 @@ const uploadData = async (req, res, next) => {
     }
 
     let dataBuffer;
+    let fileName = null;
+    let fileUrl = null;
+    const provisionalId = `REC-${uuidv4()}`;
+    
     const {
       title,
       type,
@@ -32,9 +36,12 @@ const uploadData = async (req, res, next) => {
     // Check if it's a file upload
     if (req.file) {
       dataBuffer = req.file.buffer;
+      const safeBase = path.basename(req.file.originalname || 'record.bin').replace(/[^a-zA-Z0-9._-]/g, '_');
+      fileName = safeBase;
     } else if (req.body && Object.keys(req.body).length > 0) {
       // Or raw JSON document payload
       dataBuffer = Buffer.from(JSON.stringify(req.body));
+      fileName = 'medical-record.json';
     } else {
       return res.status(400).json({ success: false, message: 'No file or data provided' });
     }
@@ -45,19 +52,14 @@ const uploadData = async (req, res, next) => {
     const dataHash = hashSum.digest('hex');
 
     // 2. Upload to Pinata IPFS
-    const cid = await pinataService.uploadFile(dataBuffer, fileName || 'medical-record');
+    const cid = await pinataService.uploadFile(dataBuffer, fileName);
 
-    // 3b. Persist file to local uploads folder (demo file storage)
-    const provisionalId = `REC-${uuidv4()}`;
-    let fileName = null;
-    let fileUrl = null;
+    // 3. Persist file to local uploads folder (demo file storage)
     if (req.file) {
-      const safeBase = path.basename(req.file.originalname || 'record.bin').replace(/[^a-zA-Z0-9._-]/g, '_');
-      const safeName = `${provisionalId}-${safeBase}`;
+      const safeName = `${provisionalId}-${fileName}`;
       await fse.ensureDir(UPLOADS_DIR);
       const outPath = path.join(UPLOADS_DIR, safeName);
       await fse.writeFile(outPath, req.file.buffer);
-      fileName = safeBase;
       fileUrl = `/uploads/${safeName}`;
     }
 
