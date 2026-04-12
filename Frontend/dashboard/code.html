@@ -321,6 +321,12 @@
     updateAuthUI();
     const btn = document.getElementById('edit-profile-btn');
     if (btn) btn.addEventListener('click', openProfileModal);
+    
+    // Listen for wallet changes (when user connects/disconnects)
+    document.addEventListener('wallet-changed', async () => {
+      updateAuthUI();
+      await syncDashboard();
+    });
   });
 
   function updateAuthUI() {
@@ -329,6 +335,12 @@
     if (address) {
       signOutBtn.classList.remove('hidden');
     } else {
+      // Clear profile when signing out
+      document.getElementById('profile-id').textContent = 'ID: —';
+      document.getElementById('profile-name').textContent = 'Patient';
+      document.getElementById('profile-age').textContent = '—';
+      document.getElementById('profile-blood').textContent = '—';
+      document.getElementById('profile-location').textContent = '—';
       signOutBtn.classList.add('hidden');
     }
   }
@@ -349,10 +361,6 @@
         document.getElementById('record-count').textContent = String(json.count || 0);
         if (json.data && json.data.length) {
           const latest = json.data[0];
-          document.getElementById('profile-name').textContent = 'Patient ' + pid;
-          document.getElementById('profile-age').textContent = '—';
-          document.getElementById('profile-blood').textContent = '—';
-          document.getElementById('profile-location').textContent = '—';
           if (latest && latest.createdAt) {
             document.getElementById('welcome-subtitle').textContent = 'Latest record uploaded ' + new Date(latest.createdAt).toLocaleDateString();
           }
