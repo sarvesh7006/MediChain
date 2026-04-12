@@ -9,13 +9,34 @@ try {
   fetchFn = fetch;
 } catch (e) {
   // Fallback to node-fetch for older Node versions
-  // node-fetch v3 is ESM only, but we have v2 and v3 installed
   try {
     const nodeFetch = require('node-fetch');
     fetchFn = nodeFetch.default || nodeFetch;
   } catch (err) {
     console.error('Failed to load fetch function:', err.message);
   }
+}
+
+// Helper to create multipart form data manually
+function createFormData(buffer, fileName) {
+  const boundary = '----PinataFormBoundary' + Math.random().toString(36).substring(2);
+  const parts = [];
+  
+  // Add file part
+  parts.push(`--${boundary}`);
+  parts.push(`Content-Disposition: form-data; name="file"; filename="${fileName}"`);
+  parts.push('Content-Type: application/octet-stream');
+  parts.push('');
+  
+  const header = Buffer.from(parts.join('\r\n') + '\r\n');
+  const footer = Buffer.from(`\r\n--${boundary}--`);
+  
+  const body = Buffer.concat([header, buffer, footer]);
+  
+  return {
+    body,
+    contentType: `multipart/form-data; boundary=${boundary}`
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -48,31 +69,32 @@ class PinataService {
     }
 
     try {
-      const form = new FormData();
-      
-      // Convert Buffer to Readable stream if needed for FormData
-      const { Readable } = require('stream');
-      let fileStream;
-      if (Buffer.isBuffer(fileBuffer)) {
-        fileStream = Readable.from(fileBuffer);
-      } else {
-        fileStream = fileBuffer;
-      }
-      
-      form.append('file', fileStream, fileName);
+      console.log('📤 Uploading to Pinata:', fileName, '|', 'Size:', fileBuffer.length, 'bytes');
+
+      // Create multipart form data manually
+      const { body, contentType } = createFormData(fileBuffer, fileName);
 
       const response = await fetchFn(`${this.pinataApiUrl}/pinning/pinFileToIPFS`, {
         method: 'POST',
         headers: {
           'pinata_api_key': this.pinataApiKey,
           'pinata_secret_api_key': this.pinataApiSecret,
+          'Content-Type': contentType,
         },
-        body: form,
+        body: body,
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(`Pinata upload failed: ${error.error || response.statusText}`);
+        let errorMessage = response.statusText;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.message || response.statusText;
+          console.error('Pinata API Error:', JSON.stringify(errorData, null, 2));
+        } catch (e) {
+          const text = await response.text();
+          console.error('Pinata API Response:', text);
+        }
+        throw new Error(`Pinata upload failed: ${errorMessage}`);
       }
 
       const result = await response.json();
@@ -80,6 +102,7 @@ class PinataService {
       return result.IpfsHash;
     } catch (error) {
       console.error('❌ Pinata upload error:', error.message);
+      console.error('Stack:', error.stack);
       throw new Error('Failed to upload file to Pinata: ' + error.message);
     }
   }
