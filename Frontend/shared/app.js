@@ -43,6 +43,9 @@
     if (address) {
       setLocal('medichain_wallet', address);
       ensurePatientId(address);
+      updateWalletButton();
+      // Notify all pages that wallet has changed
+      document.dispatchEvent(new Event('wallet-changed'));
     }
     return address;
   }
@@ -75,6 +78,8 @@
       window.localStorage.removeItem('medichain_last_profile_address');
     } catch { /* noop */ }
     updateWalletButton();
+    // Notify all pages that wallet has changed
+    document.dispatchEvent(new Event('wallet-changed'));
     return true;
   }
 

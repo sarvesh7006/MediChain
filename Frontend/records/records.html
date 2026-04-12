@@ -421,6 +421,12 @@
     if (window.location.hash === '#upload') {
       document.getElementById('upload-modal').classList.remove('hidden');
     }
+    
+    // Listen for wallet changes (when user connects/disconnects)
+    document.addEventListener('wallet-changed', () => {
+      updateAuthUI();
+      loadRecords();
+    });
   });
 
   function updateAuthUI() {
