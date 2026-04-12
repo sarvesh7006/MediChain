@@ -6,6 +6,7 @@ const { getAllRecords, verifyRecord } = require('../controllers/verifyController
 const { updateProfile, getProfile } = require('../controllers/userController');
 const { grantEmergencyAccess } = require('../controllers/emergencyController');
 const { submitClaim, listClaims, decideClaimStatus } = require('../controllers/insuranceController');
+// Updated controllers
 const { createRequest, listRequests, decideRequest } = require('../controllers/requestController');
 const { getAuditLogs } = require('../controllers/auditController');
 

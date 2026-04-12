@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { getUsers, createUser } = require('../controllers/userController');
+const { registerPatient, getPatientById } = require('../controllers/patientController');
 
-router.route('/')
-  .get(getUsers)
-  .post(createUser);
+router.post('/patients', registerPatient);
+router.get('/patients/:patientId', getPatientById);
 
 module.exports = router;
+

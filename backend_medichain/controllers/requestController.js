@@ -1,158 +1,142 @@
-const path = require('path');
-const { v4: uuidv4 } = require('uuid');
-const { readRecords, writeRecords } = require('../utils/fileHandler');
-const blockchainService = require('../services/blockchainService');
+const Request = require('../models/Request');
+const Patient = require('../models/Patient');
 const { appendAuditLog } = require('./auditController');
 
-const REQUESTS_PATH = path.join(__dirname, '..', 'data', 'requests.json');
-const RECORDS_PATH = path.join(__dirname, '..', 'data', 'records.json');
-
-const createRequest = async (req, res, next) => {
+// @desc Create access request
+const createRequest = async (req, res) => {
   try {
     const {
       patientId,
-      patientAddress,
       doctorName,
       doctorAddress,
       recordId,
       recordTitle,
       recordType,
-    } = req.body || {};
+    } = req.body;
 
     if (!patientId || !recordId) {
-      return res.status(400).json({ success: false, message: 'patientId and recordId are required' });
+      return res.status(400).json({
+        success: false,
+        message: 'patientId and recordId are required'
+      });
     }
 
-    const requests = await readRecords(REQUESTS_PATH);
-    let resolvedPatientAddress = patientAddress || null;
-    if (!resolvedPatientAddress && patientId) {
-      const records = await readRecords(RECORDS_PATH);
-      const match = [...records].reverse().find(r => r.patientId === patientId && r.patientAddress);
-      resolvedPatientAddress = match ? match.patientAddress : null;
+    // Validate patient exists
+    const patient = await Patient.findOne({ patientId: patientId.toUpperCase() });
+    if (!patient) {
+      return res.status(404).json({
+        success: false,
+        message: `Patient ID ${patientId} not found. Please ask patient to register first.`
+      });
     }
-    const id = `REQ-${uuidv4()}`;
-    const now = new Date().toISOString();
 
-    const entry = {
-      id,
-      patientId,
-      patientAddress: resolvedPatientAddress,
+    // Create request
+    const request = new Request({
+      patientId: patientId.toUpperCase(),
+      doctorWallet: doctorAddress || 'unknown',
       doctorName: doctorName || 'Doctor Portal',
-      doctorAddress: doctorAddress || null,
       recordId,
-      recordTitle: recordTitle || 'Medical Record',
-      recordType: recordType || 'other',
-      status: 'pending',
-      createdAt: now,
-      updatedAt: now
-    };
+      status: 'pending'
+    });
 
-    requests.push(entry);
-    await writeRecords(REQUESTS_PATH, requests);
+    await request.save();
 
     // Audit log
     await appendAuditLog({
-      action:         'ACCESS_REQUEST',
-      actor:          doctorName || doctorAddress || 'Doctor Portal',
-      actorType:      'doctor',
-      patientAddress: resolvedPatientAddress,
-      patientId:      patientId || null,
+      action: 'ACCESS_REQUEST',
+      actor: doctorName || doctorAddress || 'Doctor Portal',
+      actorType: 'doctor',
+      patientId: patientId.toUpperCase(),
+      patientAddress: patient.walletAddress,
       details: {
-        requestId:   id,
-        doctorName:  doctorName  || 'Doctor Portal',
+        requestId: request._id,
+        doctorName: doctorName || 'Doctor Portal',
         recordId,
         recordTitle: recordTitle || 'Medical Record',
-        recordType:  recordType  || 'other',
-        status:      'pending',
-      },
+        recordType: recordType || 'other',
+        status: 'pending'
+      }
     });
 
-    res.status(201).json({ success: true, data: entry });
+    res.status(201).json({
+      success: true,
+      data: {
+        id: request._id,
+        patientId: request.patientId,
+        doctorName: request.doctorName,
+        recordId: request.recordId,
+        status: request.status
+      }
+    });
   } catch (error) {
-    next(error);
+    console.error('Create Request Error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
-const listRequests = async (req, res, next) => {
+// @desc Get requests for patient
+const listRequests = async (req, res) => {
   try {
-    const { patientId, patientAddress, doctorAddress } = req.query || {};
-    const requests = await readRecords(REQUESTS_PATH);
+    const { patientId } = req.query;
 
-    const filtered = requests.filter(r => {
-      if (patientId && r.patientId !== patientId) return false;
-      if (patientAddress && r.patientAddress !== patientAddress) return false;
-      if (doctorAddress && r.doctorAddress !== doctorAddress) return false;
-      return true;
+    const requests = await Request.find({ patientId: patientId.toUpperCase() })
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: requests.length,
+      data: requests
     });
-
-    filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    res.status(200).json({ success: true, count: filtered.length, data: filtered });
   } catch (error) {
-    next(error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
-const decideRequest = async (req, res, next) => {
+// @desc Update request status
+const decideRequest = async (req, res) => {
   try {
     const { id } = req.params;
-    const { action } = req.body || {};
+    const { action } = req.body;
 
-    if (!action || !['grant', 'reject', 'revoke'].includes(action)) {
-      return res.status(400).json({ success: false, message: 'action must be grant, reject, or revoke' });
+    if (!['grant', 'reject'].includes(action)) {
+      return res.status(400).json({
+        success: false,
+        message: 'action must be grant or reject'
+      });
     }
 
-    const requests = await readRecords(REQUESTS_PATH);
-    const idx = requests.findIndex(r => r.id === id);
-    if (idx === -1) {
-      return res.status(404).json({ success: false, message: 'Request not found' });
+    const request = await Request.findById(id);
+    if (!request) {
+      return res.status(404).json({
+        success: false,
+        message: 'Request not found'
+      });
     }
 
-    const bypassChain = String(req.headers['x-chain-bypass'] || '') === '1';
-    if (action === 'grant') {
-      if (!bypassChain) {
-        if (!requests[idx].doctorAddress) {
-          return res.status(400).json({ success: false, message: 'doctorAddress missing for grant' });
-        }
-        await blockchainService.grantRecordAccess(Number(requests[idx].recordId), requests[idx].doctorAddress);
-      }
-      requests[idx].status = 'granted';
-    } else if (action === 'revoke') {
-      if (!bypassChain) {
-        if (!requests[idx].doctorAddress) {
-          return res.status(400).json({ success: false, message: 'doctorAddress missing for revoke' });
-        }
-        await blockchainService.revokeAccess(requests[idx].doctorAddress);
-      }
-      requests[idx].status = 'rejected';
-    } else {
-      requests[idx].status = 'rejected';
-    }
-    requests[idx].updatedAt = new Date().toISOString();
-    await writeRecords(REQUESTS_PATH, requests);
+    request.status = action;
+    await request.save();
 
-    // Audit log
-    const req_entry = requests[idx];
-    await appendAuditLog({
-      action:         'ACCESS_DECISION',
-      actor:          req_entry.patientId || req_entry.patientAddress || 'patient',
-      actorType:      'patient',
-      patientAddress: req_entry.patientAddress || null,
-      patientId:      req_entry.patientId      || null,
-      details: {
-        requestId:   id,
-        doctorName:  req_entry.doctorName  || 'Doctor',
-        recordId:    req_entry.recordId,
-        recordTitle: req_entry.recordTitle || 'Medical Record',
-        decision:    action,
-        status:      requests[idx].status,
-      },
+    res.status(200).json({
+      success: true,
+      data: request
     });
-
-    res.status(200).json({ success: true, data: requests[idx] });
   } catch (error) {
-    next(error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
-module.exports = { createRequest, listRequests, decideRequest };
+module.exports = { 
+  createRequest, 
+  listRequests, 
+  decideRequest 
+};
+

@@ -1,5 +1,12 @@
 require('dotenv').config();
 const express     = require('express');
+const connectDB    = require('./config/db');
+const dotenv       = require('dotenv');
+
+// Load env vars
+dotenv.config();
+
+connectDB();
 const cors        = require('cors');
 const helmet      = require('helmet');
 const morgan      = require('morgan');
@@ -84,6 +91,8 @@ app.use('/api/v1', (req, res, next) => {
   next();
 });
 app.use('/api/v1', decentralizedRoutes);
+// User routes for patient registration
+app.use('/api/v1/users', require('./routes/userRoutes'));
 
 // ── Serve uploaded files statically (so frontend can preview them) ───────────
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

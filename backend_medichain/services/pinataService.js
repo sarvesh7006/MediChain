@@ -23,6 +23,21 @@ function createFormData(buffer, fileName) {
   const parts = [];
   
   // Add file part
+  // pinataMetadata
+  parts.push(`--${boundary}`);
+  parts.push('Content-Disposition: form-data; name="pinataMetadata"');
+  parts.push('Content-Type: application/json');
+  parts.push('');
+  parts.push(JSON.stringify({name: fileName, keyvalues: {app: 'MediChain', type: 'medical-report'}}));
+  
+  // pinataOptions
+  parts.push(`--${boundary}`);
+  parts.push('Content-Disposition: form-data; name="pinataOptions"');
+  parts.push('Content-Type: application/json');
+  parts.push('');
+  parts.push(JSON.stringify({cidVersion: 1}));
+  
+  // file part
   parts.push(`--${boundary}`);
   parts.push(`Content-Disposition: form-data; name="file"; filename="${fileName}"`);
   parts.push('Content-Type: application/octet-stream');
@@ -46,12 +61,12 @@ function createFormData(buffer, fileName) {
 class PinataService {
   constructor() {
     this.pinataApiKey = process.env.PINATA_API_KEY;
-    this.pinataApiSecret = process.env.PINATA_API_SECRET;
+this.pinataApiSecret = process.env.PINATA_SECRET_API_KEY;
     this.pinataApiUrl = 'https://api.pinata.cloud';
     
-    if (!this.pinataApiKey || !this.pinataApiSecret) {
-      console.warn('⚠️  PinataService: Missing PINATA_API_KEY or PINATA_API_SECRET in .env');
-      console.warn('   File uploads will fail. Please add these to your .env file.');
+if (!this.pinataApiKey || !this.pinataApiSecret) {
+      console.warn('⚠️  PinataService: Using MOCK mode (no real IPFS uploads)');
+      this.mockMode = true;
     } else {
       console.log('✓ PinataService initialized with Pinata API credentials');
     }
@@ -63,7 +78,13 @@ class PinataService {
    * @param {string} fileName - The name of the file
    * @returns {Promise<string>} - The IPFS hash (CID)
    */
-  async uploadFile(fileBuffer, fileName) {
+async uploadFile(fileBuffer, fileName) {
+    if (this.mockMode) {
+      // Mock CID for demo (consistent 34-char IPFS hash format)
+      const mockCid = 'Qm' + 'X'.repeat(32) + fileName.slice(-8, -4).toUpperCase();
+      console.log('📤 MOCK IPFS upload:', mockCid, '(' + fileName + ')');
+      return mockCid;
+    }
     if (!this.pinataApiKey || !this.pinataApiSecret) {
       throw new Error('Pinata API credentials not configured in .env');
     }

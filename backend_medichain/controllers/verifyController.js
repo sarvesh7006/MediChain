@@ -3,23 +3,43 @@ const path = require('path');
 const { validationResult } = require('express-validator');
 const pinataService = require('../services/pinataService');
 const blockchainService = require('../services/blockchainService');
+const Patient = require('../models/Patient');
 const { readRecords } = require('../utils/fileHandler');
 
-const RECORDS_PATH = path.join(__dirname, '..', 'data', 'records.json');
+
+// MongoDB + Patient validation
 
 const getAllRecords = async (req, res, next) => {
   try {
-    const meta = await readRecords(RECORDS_PATH);
-    const metaById = new Map(meta.map(m => [String(m.recordId), m]));
-
     const { patientId, patientAddress } = req.query || {};
-    let resolvedAddress = patientAddress || null;
-    if (!resolvedAddress && patientId) {
-      const match = [...meta].reverse().find(m => m.patientId === patientId && m.patientAddress);
-      resolvedAddress = match ? match.patientAddress : null;
+
+    if (!patientId && !patientAddress) {
+      return res.status(400).json({
+        success: false,
+        message: 'patientId or patientAddress query parameter required'
+      });
     }
 
+    // REQUIRE registered patient for patientId lookup
+    let resolvedAddress = patientAddress;
+    if (patientId) {
+      const patient = await Patient.findOne({ patientId: patientId.toUpperCase() });
+      if (!patient) {
+        return res.status(404).json({
+          success: false,
+          message: `No patient records found for patient ID: ${patientId}. Patient must register first via /api/v1/users/patients`
+        });
+      }
+      resolvedAddress = patient.walletAddress;
+    }
+
+    const { readRecords } = require('../utils/fileHandler');
+    const RECORDS_PATH = path.join(__dirname, '..', 'data', 'records.json');
+    const meta = await readRecords(RECORDS_PATH);
+    const metaById = new Map(meta.map(m => [String(m.recordId), m]));
+    
     let recordIds = [];
+
     try {
       if (resolvedAddress) {
         recordIds = await blockchainService.getPatientRecords(resolvedAddress);
@@ -28,29 +48,28 @@ const getAllRecords = async (req, res, next) => {
         recordIds = Array.from({ length: count }, (_, i) => i + 1);
       }
     } catch (err) {
-      if (err && err.code === 'BAD_DATA') {
-        const fallback = resolvedAddress
-          ? meta.filter(m => m.patientAddress === resolvedAddress)
-          : meta;
-        const data = fallback.map(m => ({
-          id: String(m.recordId),
-          recordId: m.recordId,
-          patientAddress: m.patientAddress,
-          ipfsHash: m.cid,
-          recordType: m.type,
-          title: m.title,
-          timestamp: m.createdAt ? Math.floor(new Date(m.createdAt).getTime() / 1000) : 0,
-          exists: true,
-          ...m
-        }));
-        return res.status(200).json({
-          success: true,
-          count: data.length,
-          data,
-          warning: 'Contract mismatch or Ganache reset. Using local metadata.'
-        });
-      }
-      throw err;
+      console.warn('Blockchain fetch failed:', err.message);
+      // Fallback to local metadata
+      const fallback = resolvedAddress
+        ? meta.filter(m => m.patientAddress === resolvedAddress)
+        : meta;
+      const data = fallback.map(m => ({
+        id: String(m.recordId),
+        recordId: m.recordId,
+        patientAddress: m.patientAddress,
+        ipfsHash: m.cid,
+        recordType: m.type,
+        title: m.title,
+        timestamp: m.createdAt ? Math.floor(new Date(m.createdAt).getTime() / 1000) : 0,
+        exists: true,
+        ...m
+      }));
+      return res.status(200).json({
+        success: true,
+        count: data.length,
+        data,
+        warning: 'Blockchain unavailable. Using local metadata.'
+      });
     }
 
     // Fetch details for each record
@@ -68,31 +87,36 @@ const getAllRecords = async (req, res, next) => {
           records.push(merged);
         }
       } catch (err) {
-        if (err && err.code === 'BAD_DATA') {
-          break;
-        }
-        throw err;
+        console.warn(`Record ${recordIds[i]} fetch failed:`, err.message);
+        if (err.code === 'BAD_DATA') break;
       }
     }
-    let filtered = records.filter(r => {
-      if (patientId && r.patientId !== patientId) return false;
-      if (patientAddress && r.patientAddress !== patientAddress) return false;
-      return true;
-    });
 
-    // Fallback to local metadata if chain data is missing
-    if (filtered.length === 0 && resolvedAddress) {
-      filtered = meta.filter(m => m.patientAddress === resolvedAddress).map(m => ({
-        id: String(m.recordId),
-        recordId: m.recordId,
-        patientAddress: m.patientAddress,
-        ipfsHash: m.cid,
-        recordType: m.type,
-        title: m.title,
-        timestamp: m.createdAt ? Math.floor(new Date(m.createdAt).getTime() / 1000) : 0,
-        exists: true,
-        ...m
-      }));
+    let filtered = records;
+    if (patientId) {
+      filtered = records.filter(r => (r.patientId || '').toString().toUpperCase() === patientId.toUpperCase());
+      if (filtered.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `No records found for patient ID: ${patientId}`
+        });
+      }
+    } else if (resolvedAddress) {
+      filtered = records.filter(r => r.patientAddress?.toLowerCase() === resolvedAddress.toLowerCase());
+      if (filtered.length === 0 && meta.length > 0) {
+        // Final fallback to local meta
+        filtered = meta.filter(m => m.patientAddress?.toLowerCase() === resolvedAddress.toLowerCase()).map(m => ({
+          id: String(m.recordId),
+          recordId: m.recordId,
+          patientAddress: m.patientAddress,
+          ipfsHash: m.cid,
+          recordType: m.type,
+          title: m.title,
+          timestamp: m.createdAt ? Math.floor(new Date(m.createdAt).getTime() / 1000) : 0,
+          exists: true,
+          ...m
+        }));
+      }
     }
 
     res.status(200).json({
@@ -101,9 +125,14 @@ const getAllRecords = async (req, res, next) => {
       data: filtered
     });
   } catch (error) {
-    next(error);
+    console.error('getAllRecords error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to load records'
+    });
   }
 };
+
 
 const verifyRecord = async (req, res, next) => {
   try {

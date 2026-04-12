@@ -185,5 +185,86 @@
       "cid": "QmbKM2qLpRJ4nFhfB5AvWc1FURmjRacx5yULkx1aGUu9MP"
     },
     "timestamp": "2026-04-12T11:33:29.608Z"
+  },
+  {
+    "id": "AUDIT-19794b4b-b70b-40f6-8dff-867c024a0cb1",
+    "action": "ACCESS_REQUEST",
+    "actor": "Dr. 0x387d...962d",
+    "actorType": "doctor",
+    "patientAddress": null,
+    "patientId": "#PX-88219-BK",
+    "details": {
+      "requestId": "REQ-fba06591-c1ca-4c0d-a72c-2c136f99e744",
+      "doctorName": "Dr. 0x387d...962d",
+      "recordId": "REC-60430603-f7c0-4936-a060-eba1992cbfd2",
+      "recordTitle": "blood report",
+      "recordType": "lab",
+      "status": "pending"
+    },
+    "timestamp": "2026-04-12T20:32:15.932Z"
+  },
+  {
+    "id": "AUDIT-a8aebd85-c0f4-43e3-a64c-f79e9837ea2e",
+    "action": "UPLOAD_RECORD",
+    "actor": "patient",
+    "actorType": "patient",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "patientId": "#MC-387D962D",
+    "details": {
+      "recordId": 1,
+      "title": "blood report",
+      "type": "imaging",
+      "doctor": "Dr Joey",
+      "cid": "QmXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX__1_"
+    },
+    "timestamp": "2026-04-12T21:06:37.068Z"
+  },
+  {
+    "id": "AUDIT-dd5509d0-4e38-4f67-b1ca-5869e9b3210e",
+    "action": "UPLOAD_RECORD",
+    "actor": "patient",
+    "actorType": "patient",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "patientId": "#MC-387D962D",
+    "details": {
+      "recordId": 1,
+      "title": "X-Ray",
+      "type": "imaging",
+      "doctor": "Dr Joey",
+      "cid": "QmXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX__AM"
+    },
+    "timestamp": "2026-04-12T21:09:39.099Z"
+  },
+  {
+    "id": "AUDIT-9c38a4a1-03b6-47d2-8de4-f6d0b7e4b748",
+    "action": "UPLOAD_RECORD",
+    "actor": "patient",
+    "actorType": "patient",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "patientId": "#MC-387D962D",
+    "details": {
+      "recordId": 1,
+      "title": "X-Ray",
+      "type": "imaging",
+      "doctor": "Dr Chandler",
+      "cid": "QmcHvcw9Bf3DSP7m5LPmVMnzuB2JadGZQccymjD3YTv3g8"
+    },
+    "timestamp": "2026-04-12T21:12:06.212Z"
+  },
+  {
+    "id": "AUDIT-94e21ba6-5cb1-4e7d-9bc7-41ae9726360a",
+    "action": "UPLOAD_RECORD",
+    "actor": "patient",
+    "actorType": "patient",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "patientId": "#MC-387D962D",
+    "details": {
+      "recordId": 1,
+      "title": "X-Ray",
+      "type": "imaging",
+      "doctor": "Dr Joey",
+      "cid": "bafkreihpugrfsihoznc4sjmoujkbiw3wyqa64pfjjhqqbc4wncu643anxu"
+    },
+    "timestamp": "2026-04-12T21:18:44.603Z"
   }
 ]
