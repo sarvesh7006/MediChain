@@ -49,14 +49,23 @@ class PinataService {
 
     try {
       const form = new FormData();
-      form.append('file', fileBuffer, fileName);
+      
+      // Convert Buffer to Readable stream if needed for FormData
+      const { Readable } = require('stream');
+      let fileStream;
+      if (Buffer.isBuffer(fileBuffer)) {
+        fileStream = Readable.from(fileBuffer);
+      } else {
+        fileStream = fileBuffer;
+      }
+      
+      form.append('file', fileStream, fileName);
 
       const response = await fetchFn(`${this.pinataApiUrl}/pinning/pinFileToIPFS`, {
         method: 'POST',
         headers: {
           'pinata_api_key': this.pinataApiKey,
           'pinata_secret_api_key': this.pinataApiSecret,
-          ...form.getHeaders(),
         },
         body: form,
       });
