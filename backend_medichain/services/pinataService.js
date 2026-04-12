@@ -1,7 +1,22 @@
 const FormData = require('form-data');
-const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
+
+// Use global fetch if available (Node 18+), otherwise use node-fetch
+let fetchFn;
+try {
+  // Try using global fetch first (Node 18+)
+  fetchFn = fetch;
+} catch (e) {
+  // Fallback to node-fetch for older Node versions
+  // node-fetch v3 is ESM only, but we have v2 and v3 installed
+  try {
+    const nodeFetch = require('node-fetch');
+    fetchFn = nodeFetch.default || nodeFetch;
+  } catch (err) {
+    console.error('Failed to load fetch function:', err.message);
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Pinata Service for IPFS file storage
@@ -36,7 +51,7 @@ class PinataService {
       const form = new FormData();
       form.append('file', fileBuffer, fileName);
 
-      const response = await fetch(`${this.pinataApiUrl}/pinning/pinFileToIPFS`, {
+      const response = await fetchFn(`${this.pinataApiUrl}/pinning/pinFileToIPFS`, {
         method: 'POST',
         headers: {
           'pinata_api_key': this.pinataApiKey,
@@ -73,7 +88,7 @@ class PinataService {
 
     try {
       const jsonString = JSON.stringify(jsonData);
-      const response = await fetch(`${this.pinataApiUrl}/pinning/pinJSONToIPFS`, {
+      const response = await fetchFn(`${this.pinataApiUrl}/pinning/pinJSONToIPFS`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -105,7 +120,7 @@ class PinataService {
   async retrieveFile(ipfsHash) {
     try {
       const gatewayUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
-      const response = await fetch(gatewayUrl);
+      const response = await fetchFn(gatewayUrl);
 
       if (!response.ok) {
         throw new Error(`Gateway returned ${response.status}: ${response.statusText}`);
