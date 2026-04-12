@@ -10,6 +10,7 @@ const { appendAuditLog } = require('./auditController');
 
 const RECORDS_PATH = path.join(__dirname, '..', 'data', 'records.json');
 const UPLOADS_DIR = path.join(__dirname, '..', 'uploads');
+const MAX_FILE_SIZE = 1048576; // 1 MB in bytes
 
 const uploadData = async (req, res, next) => {
   try {
@@ -35,6 +36,13 @@ const uploadData = async (req, res, next) => {
     
     // Check if it's a file upload
     if (req.file) {
+      // Validate file size
+      if (req.file.size > MAX_FILE_SIZE) {
+        return res.status(413).json({ 
+          success: false, 
+          message: `File size exceeds 1 MB limit. File size: ${(req.file.size / 1048576).toFixed(2)} MB` 
+        });
+      }
       dataBuffer = req.file.buffer;
       const safeBase = path.basename(req.file.originalname || 'record.bin').replace(/[^a-zA-Z0-9._-]/g, '_');
       fileName = safeBase;

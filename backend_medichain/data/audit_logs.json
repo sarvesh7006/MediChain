@@ -153,5 +153,37 @@
       "status": "pending"
     },
     "timestamp": "2026-04-11T02:22:00.428Z"
+  },
+  {
+    "id": "AUDIT-da9c1243-034c-4173-9481-5bb3c9940fcc",
+    "action": "UPLOAD_RECORD",
+    "actor": "patient",
+    "actorType": "patient",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "patientId": "#MC-VN25HU",
+    "details": {
+      "recordId": "REC-dc7435a7-bfda-47ef-b608-8cd00c2ac810",
+      "title": "blood report",
+      "type": "lab",
+      "doctor": "hfhfv",
+      "cid": "QmcHvcw9Bf3DSP7m5LPmVMnzuB2JadGZQccymjD3YTv3g8"
+    },
+    "timestamp": "2026-04-12T11:30:15.429Z"
+  },
+  {
+    "id": "AUDIT-666a98b1-bf09-4731-b667-c67591dec56e",
+    "action": "UPLOAD_RECORD",
+    "actor": "patient",
+    "actorType": "patient",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "patientId": "#MC-387D962D",
+    "details": {
+      "recordId": "REC-7e7da309-a08c-408c-a0fc-ea60acd2867e",
+      "title": "Dna Report",
+      "type": "lab",
+      "doctor": "Dr Amay",
+      "cid": "QmbKM2qLpRJ4nFhfB5AvWc1FURmjRacx5yULkx1aGUu9MP"
+    },
+    "timestamp": "2026-04-12T11:33:29.608Z"
   }
 ]

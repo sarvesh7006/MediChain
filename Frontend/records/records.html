@@ -298,6 +298,13 @@
     if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
   }
   function setFile(file) {
+    const MAX_FILE_SIZE = 1048576; // 1 MB in bytes
+    
+    if (file.size > MAX_FILE_SIZE) {
+      showToast(`File size exceeds 1 MB limit. Your file is ${(file.size / 1048576).toFixed(2)} MB.`, true);
+      return;
+    }
+    
     selectedFile = file;
     document.getElementById('file-name').textContent = file.name;
     document.getElementById('file-preview').classList.remove('hidden');

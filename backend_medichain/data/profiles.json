@@ -6,10 +6,14 @@
       "age": 19,
       "bloodGroup": "O+",
       "location": "Mumbai",
-      "allergies": [],
-      "medicalConditions": [],
-      "lastUpdated": "2026-04-11T00:11:30.860Z"
+      "allergies": [
+        "Penicillin"
+      ],
+      "medicalConditions": [
+        "none"
+      ],
+      "lastUpdated": "2026-04-12T11:39:12.984Z"
     },
-    "updatedAt": "2026-04-11T00:11:30.862Z"
+    "updatedAt": "2026-04-12T11:39:12.985Z"
   }
 ]

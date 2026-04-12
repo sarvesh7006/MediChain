@@ -151,5 +151,39 @@
     "fileName": "Screenshot_2026-04-11_at_4.12.22___AM.png",
     "fileUrl": "/uploads/REC-42c9507f-5e39-4e8e-9055-631e0f13a428-Screenshot_2026-04-11_at_4.12.22___AM.png",
     "createdAt": "2026-04-11T02:12:59.278Z"
+  },
+  {
+    "recordId": "REC-dc7435a7-bfda-47ef-b608-8cd00c2ac810",
+    "cid": "QmcHvcw9Bf3DSP7m5LPmVMnzuB2JadGZQccymjD3YTv3g8",
+    "dataHash": "efa1a25920eecb45c9258ea254145b76c401ee3ca949e1008b9668a9ee6c0dbd",
+    "transactionHash": "0xda9a15296e39d4aff2fe3c54baaa44dcda5aede87e1b8089e0231e77c09d9dca",
+    "blockNumber": 10,
+    "title": "blood report",
+    "type": "lab",
+    "doctor": "hfhfv",
+    "patientId": "#MC-VN25HU",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "notes": "",
+    "uploadedBy": "patient",
+    "fileName": "Screenshot_2026-04-11_at_4.12.22___AM__1_.png",
+    "fileUrl": "/uploads/REC-dc7435a7-bfda-47ef-b608-8cd00c2ac810-Screenshot_2026-04-11_at_4.12.22___AM__1_.png",
+    "createdAt": "2026-04-12T11:30:15.428Z"
+  },
+  {
+    "recordId": "REC-7e7da309-a08c-408c-a0fc-ea60acd2867e",
+    "cid": "QmbKM2qLpRJ4nFhfB5AvWc1FURmjRacx5yULkx1aGUu9MP",
+    "dataHash": "8a9d7e1de4bc98e3bae84df621b66b0b74fa285b46417e463f833caa711b7f6f",
+    "transactionHash": "0x0b5c478bc71a60e467eff253b8c68acaf8920976ec884bb57f6e3cd511652fe8",
+    "blockNumber": 11,
+    "title": "Dna Report",
+    "type": "lab",
+    "doctor": "Dr Amay",
+    "patientId": "#MC-387D962D",
+    "patientAddress": "0x387d30447fa81156e82eadfc17dfbcba0423962d",
+    "notes": "",
+    "uploadedBy": "patient",
+    "fileName": "Dna_Report.png",
+    "fileUrl": "/uploads/REC-7e7da309-a08c-408c-a0fc-ea60acd2867e-Dna_Report.png",
+    "createdAt": "2026-04-12T11:33:29.607Z"
   }
 ]
